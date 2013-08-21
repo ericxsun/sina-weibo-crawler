@@ -53,38 +53,38 @@ WEIBO
 -----
 
 
-| key 					      | meaning 							                  		| example 						          			            	|
-| ------------------- | ------------------------------------------- | ------------------------------------------------- |
-| uid 			      		| 用户ID(数字) 								                | 1000000253 						              	        		|
-| nickname 		    		| 用户昵称 	                  								| 茶歇时间 						                      				|
-| msg 	      				| 消息内容 						                  			| 一公司网管：老板知道装了360上不了QQ，高兴坏了... 	|
-| msgurl 		      		| 消息URL 						                  			| http://weibo.com/1000000253/zF0sMQjYKS 		        |
-| msg_id 		      		| 消息ID(数字) 								                | 3471354253 							                      		|
-| msgtime 		    		| 消息发布时间(linux时间戳) 				        	| 1289012596 	                      								|
-| msgfrom 			     	| 消息来自(设备) 						              		| iPhone客户端 			                    						|
-| media 		      		| 是否含有图片/音频/视频(True/False) 		    	| True 									                        		|
-| map_data 			    	| 地图信息 						                  			|  				                          								|
-| n_likes 				    | 赞 						                      				| 1 						                          					|
-| n_forwards 		    	| 转发 						                     				| 1 					                          						|
-| n_favorites 		  	| 收藏 							                    			| 1 						                          					|
-| n_comments 		    	| 评论 								                    		| 1 								                          			|
-| is_forward 			    | 本消息是否转发(True/) 						          | True 			                        								|
-| forward_uid 		  	| 原始消息发布用者的ID(数字) 					        | 1644572034 					                      				|
-| forward_nickname 		| 原始消息发布用者的昵称 					          	| 精彩语录 								                      		|
-| forward_daren 		  | 原始消息发布用者的认证信息-达人 			    	| 微博达人 							                      			|
-| forward_verified 		| 原始消息发布用者的认证信息-新浪认证 	      | 新浪认证 				                      						|
-| forward_vip 			  | 原始消息发布用者的认证信息-新浪会员         | 微博会员 				                      						|
-| forward_msg 			  | 原始消息 							            	      	|  											                          	|
-| forward_msgurl 		  | 原始消息地址 							                	|  								                          				|
-| forward_msg_id 		  | 原始消息ID(数字) 			              				|  												                          |
-| forward_msgtime 		| 原始消息发布时间(linux时间戳) 		      		|  				                          								|
-| forward_msgfrom 		| 原始消息来自(设备) 		            					|  				                          								|
-| forward_media 		  | 原始消息是否含有图片/音频/视频(True/False) 	|  								                          				|
-| forward_map_data 		| 原始消息地图信息 					              		|  								                          				|
-| forward_n_likes 		| 原始消息赞 								                	|  												                          |
-| forward_n_forwards 	| 原始消息转发 						                		|  										                          		|
-| forward_n_favorites	| 原始消息收藏 								                |  								                          				|
-| forward_n_comments 	| 原始消息评论 				                 				|  												                          |
+| key 					      | meaning 							                  	| example 						          			            	|
+| ------------------- | ----------------------------------------- | ------------------------------------------------- |
+| uid 			      		| 用户ID(数字) 								              | 1000000253 						              	        		|
+| nickname 		    		| 用户昵称 	                  							| 茶歇时间 						                      				|
+| msg 	      				| 消息内容 						                			| 一公司网管：老板知道装了360上不了QQ，高兴坏了... 	|
+| msgurl 		      		| 消息URL 						                 			| http://weibo.com/1000000253/zF0sMQjYKS 		        |
+| msg_id 		      		| 消息ID(数字) 								              | 3471354253 							                      		|
+| msgtime 		    		| 消息发布时间(linux时间戳) 			        	| 1289012596 	                      								|
+| msgfrom 			     	| 消息来自(设备) 						              	| iPhone客户端 			                    						|
+| media 		      		| 是否含有图片/音频/视频(True/False) 		    | True 									                        		|
+| map_data 			    	| 地图信息 						                  		|  				                          								|
+| n_likes 				    | 赞 						                      			| 1 						                          					|
+| n_forwards 		    	| 转发 						                     			| 1 					                          						|
+| n_favorites 		  	| 收藏 							                  			| 1 						                          					|
+| n_comments 		    	| 评论 								                  		| 1 								                          			|
+| is_forward 			    | 本消息是否转发(True/) 					          | True 			                        								|
+| forward_uid 		  	| 原消息发布用者的ID(数字) 					        | 1644572034 					                      				|
+| forward_nickname 		| 原消息发布用者的昵称 					          	| 精彩语录 								                      		|
+| forward_daren 		  | 原消息发布用者的认证信息-达人 			    	| 微博达人 							                      			|
+| forward_verified 		| 原消息发布用者的认证信息-新浪认证 	      | 新浪认证 				                      						|
+| forward_vip 			  | 原消息发布用者的认证信息-新浪会员         | 微博会员 				                      						|
+| forward_msg 			  | 原消息 							            	      	|  											                          	|
+| forward_msgurl 		  | 原消息地址 							                	|  								                          				|
+| forward_msg_id 		  | 原消息ID(数字) 			              				|  												                          |
+| forward_msgtime 		| 原消息发布时间(linux时间戳) 		      		|  				                          								|
+| forward_msgfrom 		| 原消息来自(设备) 		            					|  				                          								|
+| forward_media 		  | 原消息是否含有图片/音频/视频(True/False) 	|  								                          				|
+| forward_map_data 		| 原消息地图信息 					              		|  								                          				|
+| forward_n_likes 		| 原消息赞 								                	|  												                          |
+| forward_n_forwards 	| 原消息转发 						                		|  										                          		|
+| forward_n_favorites	| 原消息收藏 								                |  								                          				|
+| forward_n_comments 	| 原消息评论 				                 				|  												                          |
 
 
 USER-fans/follows
