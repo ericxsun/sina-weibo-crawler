@@ -637,7 +637,7 @@ class ComWeiboFetcher(object):
                     else:
                         page = resp.read()
                 
-                if "$CONFIG['islogin'] = '1'"  or "$CONFIG['islogin']='1'" in page:
+                if "$CONFIG['islogin'] = '1'" in page or or "$CONFIG['islogin']='1'" in page:
                     is_exist = not (u'错误提示 新浪微博' in page)
                         
                     return is_exist
