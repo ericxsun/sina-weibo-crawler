@@ -40,7 +40,7 @@ class StartCrawl(threading.Thread):
         self.setDaemon(True)
         
     def run(self):
-        #start the works        
+        #start the works
         if self.website == settings.SINA_WEIBO:
             if self.ids_type == 'uid':
                 sina_weibo.main(fetcher=self.fetcher, uids=self.ids, 
@@ -428,7 +428,6 @@ class Frame(wx.Frame):
         fetch_data = DATA_CHOICES[self.fetch_data_type.GetSelection()]
         wbs = self.website_display
         fetcher = self.fetcher
-        fetcher.winodw = self
         ids = self.ids
         crawler = StartCrawl(wbs, fetcher, fetch_data, ids, id_type, 
                              self.store_path, self)

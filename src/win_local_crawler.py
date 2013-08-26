@@ -430,7 +430,6 @@ class Frame(wx.Frame):
         fetch_data = DATA_CHOICES[self.fetch_data_type.GetSelection()]
         wbs = self.website_display
         fetcher = self.fetcher
-        fetcher.window = self
         ids = self.ids
         crawler = StartCrawl(wbs, fetcher, fetch_data, ids, id_type, 
                              self.store_path, self)

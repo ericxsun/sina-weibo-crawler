@@ -33,6 +33,8 @@ def main(fetcher, **kwargs):
     store_path = kwargs.get('store_path', STORE_PATH)
     window     = kwargs.get('window', None)
     
+    fetcher.window = window
+    
     assert (fetch_data is not None and uids is not None) or (msg_urls is not None)
     
     n_ids = 0
