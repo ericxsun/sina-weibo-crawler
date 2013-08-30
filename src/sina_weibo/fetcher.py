@@ -614,9 +614,7 @@ class ComWeiboFetcher(object):
                     
         return doc
     
-    def check_user(self, uid):
-        is_exist = False
-        
+    def check_user(self, uid):        
         url = 'http://weibo.com/u/%s' %(uid)
         
         headers = self.get_headers(url)
@@ -636,46 +634,49 @@ class ComWeiboFetcher(object):
                         page = self.gzip_data(resp.read())
                     else:
                         page = resp.read()
-                
-                if "$CONFIG['islogin'] = '1'" in page or "$CONFIG['islogin']='1'" in page:
-                    is_exist = not (u'错误提示 新浪微博' in page)
-                        
-                    return is_exist
-                else:
-                    if not self.check_cookie():
-                        msg = 'Error in check_user: login failed'
-                        logger.info(msg)
-                        write_message(msg, self.window)
-                        
-                        return None
                     
+                    #not login-exist or login-exist
+                    is_exist = ((u'赶快注册微博粉我吧' in page) or 
+                                (not (u'错误提示 新浪微博' in page)) or
+                                (not (u'抱歉，您当前访问的帐号异常，暂时无法访问。' in page))
+                                )
+                                
+                    
+                    return is_exist
             except urllib2.HTTPError, e:
+                #htpp redirect
                 if e.code == 302 and e.geturl is not None:
                     is_exist = True
                 else:
                     is_exist = False
-                    
+                
                 return is_exist
             except urllib2.URLError, e:
-                if isinstance(e.reason, socket.timeout) and (i < tries - 1):
-                    sec = (i + 1) * 5
-                    msg = ('Error in check_user:timeout. Retry: (%s-%s)-sleep %s seconds' 
-                            %(tries, i, sec))
-                    write_message(msg, self.window)
-                    time.sleep(sec)
-                else:
-                    msg = 'Error in check_user: retry timeout. %s' %str(e)
-                    logger.info(msg)
-                    write_message(msg, self.window)
+                if isinstance(e.reason, socket.timeout):
+                    if i < tries - 1:
+                        sec = (i + 1) * 5
+                        msg = ('Error in check_user:timeout. Retry: '
+                               '(%s-%s)-sleep %s seconds' %(tries, i, sec))
+                        
+                        write_message(msg, self.window)
+                        time.sleep(sec)
+                        
+                        continue
+                    else:
+                        msg = 'Error in check_user: retry timeout. %s' %str(e)
+                        logger.info(msg)
+                        write_message(msg, self.window)
                     
-                    return None
+                        return None
+                else:
+                    msg = 'Error in check_user: exit URLEroor. %s' %str(e)
             except Exception, e:
-                msg = 'Error in check_user: exit incorrect. %s' %str(e)
+                msg = 'Error in check_user: exit Exception. %s' %str(e)
                 logger.info(msg)
                 write_message(msg, self.window)
                 
-                return None
-        
+                return None                     
+
     def check_message(self, msg_url):
         '''
         msg_url looks like http://weibo.com/1657470871/A0TpPBtt3
