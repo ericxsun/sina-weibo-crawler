@@ -696,7 +696,7 @@ class ComWeiboFetcher(object):
             return None
         
         if u'抱歉，你访问的页面地址有误，或者该页面不存在' in page:
-            return None
+            return False
                 
         query = settings.QUERY_WEIBOS
         doc   = pq(self.extract_content(page, query))
