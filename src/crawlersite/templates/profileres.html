@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" > 
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title> Share Happy </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css" href="/static/css/jquery-ui.css" media="screen"/>
+
+	<!-- system css -->
+	<link rel="stylesheet" type="text/css" href="/static/css/table_data.css" media="screen"/>
+	<link rel="stylesheet" type="text/css" href="/static/css/style.css" media="screen"/>
+
+	<script type="text/javascript" src="/static/js/jquery.js"></script>
+	<script type="text/javascript" src="/static/js/jquery-ui.js"></script>
+
+	<!-- DJANGO CSRF ajax post js -->
+	<script type="text/javascript" src="/static/js/django-csrf.js"></script>
+
+	<!-- skin js -->
+	<script type="text/javascript" src="/static/js/jquery.fancybox-1.3.2.js"></script>
+	<script type="text/javascript" src="/static/js/jquery.dataTables.js"></script>
+
+	<!-- golbal css -->
+	<link rel="stylesheet" type="text/css" href="/static/css/golbal.css" media="screen"/>
+	<script>
+		$(function() {
+			
+		});
+		
+	</script>
+		
+	<style>	
+		.tipFont {
+			font-family: serif;
+			color: green;
+			font-size: 16px;
+			font-weight: bold;
+		}
+		
+	</style>
+</head>
+
+<body>
+<div class="column width100 fl">
+	<div class="box">
+		<h2 class="box-header"> 用户信息数据 </h2>
+		<div class="box-content box-table">
+			<table id="resTable" cellpadding="0" cellspacing="0" border="0" class="tablebox">
+				<thead class="table-header">
+					<tr>
+						<th class="width30">文件名</th>
+						<th class="width10">大小(KB)</th>
+						<th class="width20">文件描述</th>
+						<th class="width10">上传者</th>
+						<th style="width:18%">上传日期</th>
+						<th class="width10">下载积分</th>
+						<th class="width10">下载次数</th>
+						<th class="tc">下载</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr class="even">
+						<td class="first">xx</td>
+						<td>xx</td>
+						<td>xx</td>
+						<td>xx</td>
+						<td>xx</td>
+						<td>xx</td>
+						<td>xx</td>
+						<td align="center">
+							<a id="resA" class="button white" href="javascript:download_res(xx, xx)"><span class="pack _276"></span></a>
+						</td>
+					</tr>
+					<tr class="odd">
+						<td class="first">xx</td>
+						<td>xx</td>
+						<td>xx</td>
+						<td>xx</td>
+						<td>xx</td>
+						<td>xx</td>
+						<td>xx</td>
+						<td align="center">
+							<a id="resA" class="button white" href="javascript:download_res(xx, xx)"><span class="pack _276"></span></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+	
+			<a id="downloadA" name="downloadA" style="display:none" href="javascript:alert('downloadA')">下载</a>
+			<form id="downloadForm" action=""></form>
+			<input type="hidden" id="residHidden" value=""/>
+			<ul class="pagination">
+				<li><a class="button white active" href="?page=1" title="第1页">1</a></li>
+				<li><a class="button white" href="?page=2" title="第2页">2</a></li>
+				<li><a class="button white" href="?page=3" title="第3页">3</a></li>
+				<li><a class="button white" href="?page=4" title="第4页">4</a></li>
+				<li><a class="button white" href="?page=5" title="第5页">5</a></li>
+				<li><a class="button white" href="?page=2"> &gt; </a></li>
+				<li><a class="button white" href="?page=50248"> &gt;&gt; </a></li>
+				<li>&nbsp;&nbsp;</li>
+				<li>总记录：<a class="button white" href="?page=50248"> 502473 </a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div id="dialog-confirm" style="display:none" title="下载提示">
+<p><span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>下载该资源文件将会扣除您积分：<strong id="pointSpan"></strong>.<br/><font color="red" style="font-weight: bolder;">重复下载(5次)以内不会再次扣分.</font></p>
+</div>
+<script>
+	$(function() {
+		$( "#dialog-confirm" ).dialog({
+			autoOpen: false,
+			resizable: false,
+			height:175,
+			modal: true,
+			buttons: {
+				"确定下载": function() { 
+					resId = $("#residHidden").val();
+					$.post("/download/"+resId, { 
+							
+					},function(data) {			
+						if(data == "needLogin"){
+							self.parent.showLoginDialog();
+						}else if(data == "pointError"){
+							alert("积分不足!");
+						}else if(data == "sysError"){
+							alert("下载服务器异常!");
+						}else if(data == "resError"){
+							alert("不存在的资源!");
+						}else{
+							window.location = data;
+						}
+					});
+						
+					$( this ).dialog( "close" );
+				},
+					
+				"取消": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	});
+		
+	function download_res(resid, point){
+		$("#pointSpan").text(point);
+		$("#residHidden").val(resid);
+		$( "#dialog-confirm" ).dialog("open");
+	}
+</script>
+</body>
+</html>

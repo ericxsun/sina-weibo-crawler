@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html> 
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title> About </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<link rel="stylesheet" type="text/css" href="/static/css/jquery-ui.css" media="screen"/>
+
+	<!-- system css -->
+	<link rel="stylesheet" type="text/css" href="/static/css/table_data.css" media="screen"/>
+	<link rel="stylesheet" type="text/css" href="/static/css/style.css" media="screen"/>
+
+	<script type="text/javascript" src="/static/js/jquery.js"></script>
+	<script type="text/javascript" src="/static/js/jquery-ui.js"></script>
+
+	<!-- DJANGO CSRF ajax post js -->
+	<script type="text/javascript" src="/static/js/django-csrf.js"></script>
+
+	<!-- skin js -->
+	<script type="text/javascript" src="/static/js/jquery.fancybox-1.3.2.js"></script>
+	<script type="text/javascript" src="/static/js/jquery.dataTables.js"></script>
+
+	<!-- golbal css -->
+	<link rel="stylesheet" type="text/css" href="/static/css/golbal.css" media="screen"/>
+	<script>
+		$(function() {
+			
+		});
+		
+	</script>
+		
+	<style>
+		.tipFont {
+			font-family: serif;
+			color: green;
+			font-size: 16px;
+			font-weight: bold;
+		}
+		
+	</style>
+</head>
+
+<body>
+<div class="column width100 fl">
+	<div class="box">
+		<h2 class="box-header"> 关于－数据格式 </h2>
+		<br/>
+		
+		<div class="box-content box-table" style="width: 50%; margin-left: 50px;">
+		<h2 style="width: 98.5%;" class="box-header" align="middle">微博数据</h2>
+		<table cellpadding="0" cellspacing="0" border="0" class="tablebox" width="50%">
+			<thead class="table-header">
+				<tr>
+					<th class="width10">字段名</th>
+					<th class="width30">描述</th>
+					<th class="width20">示例</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="odd">
+					<td>uid</td>
+					<td>用户ID(数字)</td>
+					<td>1000000253</td>
+				</tr>
+				<tr class="even">
+					<td>nickname</td>
+					<td>用户昵称</td>
+					<td>茶歇时间</td>
+				</tr>
+				<tr class="odd">
+					<td>msg</td>
+					<td>消息内容</td>
+					<td>一公司网管：老板知道装了360上不了QQ，高兴坏了...</td>
+				</tr>
+				<tr class="even">
+					<td>msgurl</td>
+					<td>消息URL</td>
+					<td>http://weibo.com/1000000253/zF0sMQjYKS</td>
+				</tr>
+				<tr class="odd">
+					<td>msg_id</td>
+					<td>消息ID(数字)</td>
+					<td>1000000253</td>
+				</tr>
+				<tr class="even">
+					<td>msgtime</td>
+					<td>消息发布时间(linux时间戳)</td>
+					<td>1289012596</td>
+				</tr>
+				<tr class="odd">
+					<td>msgfrom</td>
+					<td>消息来自(设备)</td>
+					<td>iPhone客户端 </td>
+				</tr>
+				<tr class="even">
+					<td>media</td>
+					<td>消息中是否含有图片/音频/视频(True/False)</td>
+					<td></td>
+				</tr>
+				<tr class="odd">
+					<td>map_data</td>
+					<td>地图信息</td>
+					<td></td>
+				</tr>
+				<tr class="even">
+					<td>n_likes</td>
+					<td>赞</td>
+					<td>1</td>
+				</tr>
+				<tr class="odd">
+					<td>n_forwards</td>
+					<td>转发</td>
+					<td>1</td>
+				</tr>
+				<tr class="even">
+					<td>n_favorites</td>
+					<td>收藏</td>
+					<td>1</td>
+				</tr>
+				<tr class="odd">
+					<td>n_comments</td>
+					<td>评论</td>
+					<td>1</td>
+				</tr>
+				<tr class="even">
+					<td>is_forward</td>
+					<td>本消息是否为转发(True/False)</td>
+					<td></td>
+				</tr>
+				<tr class="odd">
+					<td>forward_uid</td>
+					<td>原消息发布用者的ID(数字)</td>
+					<td>1644572034</td>
+				</tr>
+				<tr class="even">
+					<td>forward_nickname</td>
+					<td>原消息发布用者的昵称</td>
+					<td></td>
+				</tr>
+				<tr class="odd">
+					<td>forward_daren</td>
+					<td>原消息发布用者的认证信息-达人</td>
+					<td>微博达人</td>
+				</tr>
+				<tr class="even">
+					<td>forward_verified</td>
+					<td>原消息发布用者的认证信息-新浪认证</td>
+					<td>新浪认证</td>
+				</tr>
+				<tr class="odd">
+					<td>forward_vip</td>
+					<td>原消息发布用者的认证信息-新浪会员</td>
+					<td>新浪会员</td>
+				</tr>
+				<tr class="even">
+					<td>forward_msg</td>
+					<td>原消息</td>
+					<td></td>
+				</tr>
+				<tr class="odd">
+					<td>forward_msgurl</td>
+					<td>原消息地址</td>
+					<td></td>
+				</tr>
+				<tr class="even">
+					<td>forward_msg_id</td>
+					<td>原消息ID(数字)</td>
+					<td>原消息ID(数字)</td>
+				</tr>
+				<tr class="even">
+					<td>forward_msgtime</td>
+					<td>原消息发布时间(linux时间戳)</td>
+					<td></td>
+				</tr>
+				<tr class="even">
+					<td>forward_msgfrom</td>
+					<td>原消息来自(设备)</td>
+					<td></td>
+				</tr>
+				<tr class="odd">
+					<td>forward_media</td>
+					<td>原消息是否含有图片/音频/视频(True/False)</td>
+					<td></td>
+				</tr>
+				<tr class="even">
+					<td>forward_map_data</td>
+					<td>原消息地图信息</td>
+					<td></td>
+				</tr>
+				<tr class="odd">
+					<td>forward_n_likes</td>
+					<td>原消息赞</td>
+					<td></td>
+				</tr>
+				<tr class="even">
+					<td>forward_n_forwards</td>
+					<td>原消息转发</td>
+					<td></td>
+				</tr>
+				<tr class="odd">
+					<td>forward_n_favorites</td>
+					<td>原消息收藏</td>
+					<td></td>
+				</tr>
+				<tr class="even">
+					<td>forward_n_comments</td>
+					<td>原消息评论</td>
+					<td></td>
+				</tr>
+
+			</tbody>
+		</table>
+		</div>
+
+		<div class="box-content box-table" style="width: 50%; margin-left: 50px;">
+			<h2 style="width: 98.5%;" class="box-header" align="middle">关系数据(关注/粉丝)</h2>
+			<table cellpadding="0" cellspacing="0" border="0" class="tablebox" width="50%">
+			<thead class="table-header">
+				<tr>
+					<th class="width10">字段名</th>
+					<th class="width30">描述</th>
+					<th class="width20">示例</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="odd"><td>uid</td><td>用户ID(数字)</td><td></td></tr>
+				<tr class="even"><td>nickname</td><td>昵称</td><td></td></tr>
+				<tr class="odd"><td>sex</td><td>性别</td><td></td></tr>
+				<tr class="even"><td>addr</td><td>地址</td><td></td></tr>
+				<tr class="odd"><td>daren</td><td>达人</td><td></td></tr>
+				<tr class="even"><td>verified</td><td>新浪认证</td><td></td></tr>
+				<tr class="odd"><td>vip</td><td>新浪会员</td><td></td></tr>
+				<tr class="even"><td>n_follows</td><td>关注数</td><td></td></tr>
+				<tr class="odd"><td>n_fans</td><td>粉丝数</td><td></td></tr>
+				<tr class="even"><td>n_weibos</td><td>微博数</td><td></td></tr>
+				<tr class="odd"><td>intro</td><td>简介</td><td></td></tr>
+				<tr class="even"><td>follow_from</td><td>关注来自(设备)</td><td></td></tr>
+			</tbody>
+			</table>
+		</div>
+
+
+		<div class="box-content box-table" style="width: 50%; margin-left: 50px;">
+			<h2 style="width: 98.5%;" class="box-header" align="middle">用户信息</h2>
+			<table cellpadding="0" cellspacing="0" border="0" class="tablebox" width="100%">
+			<thead class="table-header">
+				<tr>
+					<th class="width10">字段名</th>
+					<th class="width30">描述</th>
+					<th class="width20">示例</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="odd"><td>uid</td><td>用户ID</td><td></td></tr>
+				<tr class="even"><td>nickname</td><td>昵称</td><td></td></tr>
+				<tr class="odd"><td>location</td><td>地址</td><td></td></tr>
+				<tr class="even"><td>sex</td><td>性别</td><td></td></tr>
+				<tr class="odd"><td>birth</td><td>生日</td><td></td></tr>
+				<tr class="even"><td>blog</td><td>博客</td><td></td></tr>
+				<tr class="odd"><td>domain</td><td>个性域名</td><td></td></tr>
+				<tr class="even"><td>intro</td><td>简介</td><td></td></tr>
+				<tr class="odd"><td>email</td><td>email</td><td></td></tr>
+				<tr class="even"><td>QQ</td><td>QQ</td><td></td></tr>
+				<tr class="odd"><td>MSN</td><td>MSN</td><td></td></tr>
+				<tr class="even"><td>university</td><td>教育</td><td></td></tr>
+				<tr class="odd"><td>company</td><td>工作</td><td></td></tr>
+				<tr class="even"><td>tag</td><td>标签</td><td></td></tr>
+				<tr class="odd"><td>n_follows</td><td>关注数</td><td></td></tr>
+				<tr class="even"><td>n_fans</td><td>粉丝数</td><td></td></tr>
+				<tr class="odd"><td>n_weibos</td><td>微博数</td><td></td></tr>
+				<tr class="even"><td>daren_level</td><td>达人信息(等级)</td><td>高级达人</td></tr>
+				<tr class="odd"><td>daren_score</td><td>达人信息(积分)</td><td></td></tr>
+				<tr class="even"><td>daren_interests</td><td>达人信息(爱好)</td><td></td></tr>
+				<tr class="odd"><td>medal</td><td>勋章信息</td><td></td></tr>
+				<tr class="even"><td>cur_level</td><td>当前等级</td><td></td></tr>
+				<tr class="odd"><td>active_days</td><td>活跃天数</td><td></td></tr>
+				<tr class="even"><td>next_level_days</td><td>距离下一级别</td><td></td></tr>
+				<tr class="odd"><td>trust_level</td><td>信用等级</td><td></td></tr>
+				<tr class="even"><td>trust_score</td><td>当前信用积分</td><td></td></tr>		
+			</tbody>
+			</table>
+		</div>
+
+		<div class="box-content box-table" style="width: 50%; margin-left: 50px;">
+			<h2 style="width: 98.5%;" class="box-header" align="middle">消息转发/评论数据</h2>
+			<table cellpadding="0" cellspacing="0" border="0" class="tablebox" width="50%">
+			<thead class="table-header">
+				<tr>
+					<th class="widtd10">字段名</th>
+					<th class="widtd30">描述</th>
+					<th class="widtd20">示例</th>
+				</tr>
+			</tdead>
+			<tbody>
+				<tr class="odd"><td>uid</td><td>转发/评论消息用户的ID</td><td></td></tr>
+				<tr class="even"><td>nickname</td><td>转发/评论消息用户的昵称</td><td></td></tr>
+				<tr class="odd"><td>daren</td><td>转发/评论消息用户的认证信息-达人</td><td></td></tr>
+				<tr class="even"><td>verified</td><td>转发/评论消息用户的认证信息-新浪认证</td><td></td></tr>
+				<tr class="odd"><td>vip</td><td>转发/评论消息用户的认证信息-新浪会员</td><td></td></tr>
+				<tr class="even"><td>msg</td><td>转发/评论消息 </td><td></td></tr>
+				<tr class="odd"><td>msg_url</td><td>转发/评论消息URL</td><td></td></tr>
+				<tr class="even"><td>msg_id</td><td>转发/评论消息ID</td><td></td></tr>
+				<tr class="odd"><td>msg_time</td><td>转发/评论时间(linux时间戳)</td><td></td></tr>
+				<tr class="even"><td>forward_uid</td><td>原消息用户ID</td><td></td></tr>
+				<tr class="odd"><td>forward_nickname</td><td>原消息用户昵称</td><td></td></tr>
+				<tr class="even"><td>forward_msg_url</td><td>原消息URL</td><td>http://weibo.com/1000000253/zF0sMQjYKS</td></tr>
+				<tr class="odd"><td>forward_msg_id</td><td>原消息ID(数字)</td><td>3471354253</td></tr>
+			</tbody>
+			</table>
+		</div>
+
+	</div>
+</div>
+</body>
+
+</html>
+
+

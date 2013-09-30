@@ -1,0 +1,50 @@
+<script>
+		$(function() {
+			//$("#resTable a[id='resA']").click(function() {
+				///download/
+			//});
+			
+			$( "#dialog-confirm" ).dialog({
+				autoOpen: false,
+				resizable: false,
+				height:175,
+				modal: true,
+				buttons: {
+					"确定下载": function() { 
+						//$("#downloadForm").submit();
+						//$("#downloadA").trigger("click");
+						resId = $("#residHidden").val();
+						$.post("/download/"+resId, { 
+							
+							},function(data) {
+								//alert(data);
+								if(data == "needLogin"){
+									self.parent.showLoginDialog();
+									//window.mainframe.location.href="";
+								}else if(data == "pointError"){
+									alert("积分不足!");
+								}else if(data == "sysError"){
+									alert("下载服务器异常!");
+								}else if(data == "resError"){
+									alert("不存在的资源!");
+								}else{
+									window.location = data;
+								}
+					    });
+						
+						$( this ).dialog( "close" );
+					},
+					"取消": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		});
+		
+		function download_res(resid, point){
+			$("#pointSpan").text(point);
+			$("#residHidden").val(resid);
+			$( "#dialog-confirm" ).dialog("open");
+		}
+
+		</script>

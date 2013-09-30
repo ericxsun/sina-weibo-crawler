@@ -1,0 +1,74 @@
+/* The CSS Code for the menu starts here */
+			#menu {
+				font-family: Arial, sans-serif;
+				font-weight: bold;
+				text-transform: uppercase;
+				margin: 10px 0;
+				padding: 0 0 0 10px;
+				list-style-type: none;
+				font-size: 13px;
+				background: #eee;
+				height: 40px;
+				border-top: 2px solid #eee;
+				border-left: 2px solid #eee;
+				border-bottom: 2px solid #ccc;
+				border-right: 2px solid #ccc;
+			}
+			#menu li {
+				float: left;
+				margin: 0;
+				
+			}
+			#menu li a {
+				text-decoration: none;
+				display: block;
+				padding: 0 20px;
+				line-height: 40px;
+				color: #666;
+			}
+			#menu li a:hover, #menu li.active a {
+				background-color: #f5f5f5;
+				border-bottom: 2px solid #DDD;
+				color: #999;
+			}
+			
+			/* Black Menu */
+			#menu.black {
+				border-top: 2px solid #333;
+				border-left: 2px solid #333;
+				border-bottom: 2px solid #000;
+				border-right: 2px solid #000;
+				background: #333;}
+			#menu.black a {color: #CCC;}
+			#menu.black li a:hover, #menu.black li.active a {color: #999; background: #555; border-bottom: 2px solid #444;}
+
+			
+			/* Blue Menu */
+			#menu.blue {
+				border-top: 2px solid #356AA0;
+				border-left: 2px solid #356AA0;
+				border-bottom: 2px solid #204061;
+				border-right: 2px solid #204061;
+				background: #356AA0;}
+			#menu.blue a {color: #fff;}
+			#menu.blue li a:hover, #menu.blue li.active a {color: #90CDFF; background: #3D7BBB; border-bottom: 2px solid #356AA0;}
+			
+			/* Red Menu */
+			#menu.red {
+				border-top: 2px solid #660000;
+				border-left: 2px solid #660000;
+				border-bottom: 2px solid #450000;
+				border-right: 2px solid #450000;
+				background: #660000;}
+			#menu.red a {color: #fff;}
+			#menu.red li a:hover, #menu.red li.active a {color: #F27F84; background: #990000; border-bottom: 2px solid #660000;}
+			
+			/* Orange Menu */
+			#menu.orange {
+				border-top: 2px solid #d15600;
+				border-left: 2px solid #d15600;
+				border-bottom: 2px solid #B44500;
+				border-right: 2px solid #B44500;
+				background: #d15600;}
+			#menu.orange a {color: #fff;}
+			#menu.orange li a:hover, #menu.orange li.active a {color: #FA9B5B; background: #B44500; border-bottom: 2px solid #d15600;}
