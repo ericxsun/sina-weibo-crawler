@@ -17,9 +17,7 @@ class ComWeiboCrawler(object):
         self.uid     = kwargs.get('uid', None)
         self.msg_url = kwargs.get('msg_url', None)
         self.window  = kwargs.get('window', None)
-        
-        self.error = False
-        
+                
     def _check_page_right(self, html):
         '''
         check whether the page is got before login or after.
@@ -31,6 +29,10 @@ class ComWeiboCrawler(object):
         html = self.fetcher.fetch(url, query)
         
         page_right = self._check_page_right(html)
+        
+        if page_right:
+            return html
+        
         tries = 0
         while not page_right and tries <= 10:
             time.sleep(10)
@@ -42,19 +44,22 @@ class ComWeiboCrawler(object):
             
             html = self.fetcher.fetch(url, query)
             page_right = self._check_page_right(html)
+            
             if page_right:
                 return html
             
             tries += 1
-        else:
-            return html
         
-        self.error = True
+        return None
     
     def _fetch_msg_repost(self, msg_id, page=1):
         html, num_pages = self.fetcher.fetch_msg_reposts(msg_id, page)
         
         page_right = self._check_page_right(html)
+        
+        if page_right:
+            return html, num_pages
+        
         tries = 0
         while not page_right and tries <= 10:
             time.sleep(10)
@@ -66,19 +71,22 @@ class ComWeiboCrawler(object):
             
             html, num_pages = self.fetcher.fetch_msg_reposts(msg_id, page)
             page_right = self._check_page_right(html)
+            
             if page_right:
                 return html, num_pages
             
             tries += 1
-        else:
-            return html, num_pages
         
-        self.error = True
+        return None, None
  
     def _fetch_msg_comment(self, msg_id, page=1):
         html, num_pages = self.fetcher.fetch_msg_comments(msg_id, page)
         
         page_right = self._check_page_right(html)
+        
+        if page_right:
+            return html, num_pages
+        
         tries = 0
         while not page_right and tries <= 10:
             time.sleep(10)
@@ -90,19 +98,22 @@ class ComWeiboCrawler(object):
             
             html, num_pages = self.fetcher.fetch_msg_reposts(msg_id, page)
             page_right = self._check_page_right(html)
+            
             if page_right:
                 return html, num_pages
             
             tries += 1
-        else:
-            return html, num_pages
         
-        self.error = True
+        return None, None
                 
     def _fetch_weibo(self, uid, page):
         html = self.fetcher.fetch_weibo(uid, page)
         
         page_right = self._check_page_right(html)
+        
+        if page_right:
+            return html
+        
         tries = 0
         while not page_right and tries <= 10:
             time.sleep(10)
@@ -114,14 +125,13 @@ class ComWeiboCrawler(object):
             
             html = self.fetcher.fetch_weibo(uid, page)
             page_right = self._check_page_right(html)
+            
             if page_right:
                 return html
             
             tries += 1
-        else:
-            return html    
         
-        self.error = True
+        return None
         
     def crawl_weibos(self):
         def _crawl(parser, uid, page, num_pages=''):
@@ -130,11 +140,14 @@ class ComWeiboCrawler(object):
         
             html = self._fetch_weibo(uid, page)
             
+            if html is None:
+                return None
+            
             try:
                 pq_doc = pq(html)
                 return parser.parse(pq_doc)
             except:
-                return 0
+                return None
             
         msg = 'Checking: whether user(%s) exists or not...' %self.uid
         write_message(msg, self.window)
@@ -185,11 +198,14 @@ class ComWeiboCrawler(object):
             url  = 'http://weibo.com/%s/follow?page=%s' %(uid, page)
             html = self._fetch(url, query=settings.QUERY_FOLLOWS)
             
+            if html is None:
+                return None
+            
             try:
                 pq_doc = pq(html)
                 return parser.parse(pq_doc)
             except:
-                return 0
+                return None
         
         msg = 'Checking: whether user(%s) exists or not...' %self.uid
         write_message(msg, self.window)
@@ -245,11 +261,15 @@ class ComWeiboCrawler(object):
             
             url  = 'http://weibo.com/%s/fans?page=%s' %(uid, page)
             html = self._fetch(url, query=settings.QUERY_FANS)
+            
+            if html is None:
+                return None
+            
             try:
                 pq_doc = pq(html)
                 return parser.parse(pq_doc)
             except:
-                return 0
+                return None
             
         msg = 'Checking: whether user(%s) exists or not...' %self.uid
         write_message(msg, self.window)
@@ -323,18 +343,22 @@ class ComWeiboCrawler(object):
         parser = ComInfosParser(self.uid, self.storage)
         
         html   = self._fetch(url, query=settings.QUERY_INFO)
-        try:
-            pq_doc = pq(html)
-            parser.parse(pq_doc)
-        except:
-            pass
-    
+        
         cost_time = int(time.time() - start_time)
         
         msg = ('Crawl user(%s)\'s infos: cost time=%s sec, connections=%s' 
                %(self.uid, cost_time, self.fetcher.n_connections))
         logger.info(msg)
         write_message(msg, self.window)
+                
+        if html is None:
+            return None
+        
+        try:
+            pq_doc = pq(html)
+            parser.parse(pq_doc)
+        except:
+            return None
 
     def crawl_msg_reposts(self):
         def _crawl(parser, msg_id, page, num_pages=''):
@@ -343,13 +367,16 @@ class ComWeiboCrawler(object):
         
             html, num_pages = self._fetch_msg_repost(msg_id, page)
             
+            if html is None:
+                return None
+            
             try:
                 pq_doc = pq(html)
                 parser.parse(pq_doc)
+                
+                return num_pages
             except:
-                pass
-            
-            return num_pages
+                return None
         
         msg = 'Checking: whether message exists or not...'
         write_message(msg, self.window)
@@ -394,13 +421,17 @@ class ComWeiboCrawler(object):
             write_message(msg, self.window)
         
             html, num_pages = self._fetch_msg_comment(msg_id, page)
+            
+            if html is None:
+                return None
+            
             try:
                 pq_doc = pq(html)
                 parser.parse(pq_doc)
+                
+                return num_pages
             except:
-                pass
-            
-            return num_pages
+                return None
         
         msg = 'Checking: whether message exists or not...'
         write_message(msg, self.window)
