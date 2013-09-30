@@ -9,6 +9,7 @@ FACEBOOK   = 'Facebook'
 
 SITE_CHOICES = [SINA_WEIBO, TWITTER, FACEBOOK]
 DATA_CHOICES = ['weibos', 'follows', 'fans', 'infos']
+MSG_CHOICES  = ['repost', 'comment']
 
 HOME_PAGE = 'http://www.cns.edu.cn'
 
