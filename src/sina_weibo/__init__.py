@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+from __future__ import division
 from common import STORE_PATH, write_message, logger, update_progress_bar, \
                     format_delta_time
 from crawler import ComWeiboCrawler
@@ -43,6 +44,7 @@ def main(fetcher, **kwargs):
     last_time  = start_time
     
     n_connections = 0
+    n_errors = 0
     
     if uids is not None:
         fetch_data = fetch_data.lower()
@@ -83,16 +85,20 @@ def main(fetcher, **kwargs):
             
             if fetch_data == 'weibos':
                 crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
-                crawler.crawl_weibos()
+                if crawler.crawl_weibos() is None:
+                    n_errors += 1
             elif fetch_data == 'follows':
                 crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
-                crawler.crawl_follows()
+                if crawler.crawl_follows() is None:
+                    n_errors += 1
             elif fetch_data == 'fans':
                 crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
-                crawler.crawl_fans()
+                if crawler.crawl_fans() is None:
+                    n_errors += 1
             elif fetch_data == 'infos':
                 crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
-                crawler.crawl_infos()
+                if crawler.crawl_infos() is None:
+                    n_errors += 1
             
             t_id_e = time.time()
             dt_id  = int(t_id_e - t_id_s)
@@ -144,7 +150,8 @@ def main(fetcher, **kwargs):
             
             #repost
             crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
-            crawler.crawl_msg_reposts()
+            if crawler.crawl_msg_reposts() is None:
+                n_errors += 1
             
             n_connections += fetcher.n_connections
             fetcher.n_connections = 0
@@ -156,7 +163,8 @@ def main(fetcher, **kwargs):
             
             #comment
             crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
-            crawler.crawl_msg_comments()
+            if crawler.crawl_msg_comments() is None:
+                n_errors += 1
     
             t_id_e = time.time()
             dt_id  = int(t_id_e - t_id_s)
@@ -173,6 +181,11 @@ def main(fetcher, **kwargs):
     msg  = 'The task has successfully finished.\n'
     msg += 'Crawled [user|message]ids: %d, cost time: %d(d)-%d(h)-%d(m)-%d(s), connections: %d' %(n_ids, d, h, m, s, n_connections)
     
+    accuracy = 1 - n_errors / n_ids
+    msg += '\nAccuracy:%.2f' %(accuracy)
+    
     write_message('=======', window)
     logger.info(msg)
     write_message(msg, window)
+    
+    return accuracy
