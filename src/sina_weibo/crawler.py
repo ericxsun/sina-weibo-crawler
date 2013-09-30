@@ -154,15 +154,19 @@ class ComWeiboCrawler(object):
         
         is_exist = self.fetcher.check_user(self.uid)
         
-        if is_exist is None:
-            return
+        if is_exist is None:    #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            return None
         
         if not is_exist:
             msg = 'Not exist: %s.' %self.uid
             logger.info(msg)
             write_message(msg, self.window)
             
-            return
+            return False
         
         self.storage = FileStorage(self.uid, settings.MASK_WEIBO, self.store_path)
         
@@ -171,6 +175,18 @@ class ComWeiboCrawler(object):
         parser = ComWeibosParser(self.uid, self.storage)
         
         num_pages = _crawl(parser, self.uid, page=1)
+        
+        if num_pages is None:    #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            try:
+                self.storage.delete(self.storage.weibos_fp, self.storage.weibos_f_name)
+            except:
+                pass
+            
+            return None
                 
         pages = [i for i in xrange(2, num_pages+1)]
         if len(pages) > 0:
@@ -182,6 +198,20 @@ class ComWeiboCrawler(object):
                 worker_manager.add_job(_crawl, parser, self.uid, pg, num_pages)
             
             worker_manager.wait_all_complete()
+            is_None = worker_manager.get_result()
+            worker_manager.stop()
+            
+            if is_None:    #error occur
+                msg = 'Error'
+                logger.info(msg)
+                write_message(msg, self.window)
+            
+                try:
+                    self.storage.delete(self.storage.weibos_fp, self.storage.weibos_f_name)
+                except:
+                    pass
+            
+                return None
         
         cost_time = int(time.time() - start_time)
         msg = ('Crawl user(%s)\'s weibos: total page=%s,'
@@ -211,15 +241,19 @@ class ComWeiboCrawler(object):
         write_message(msg, self.window)
         is_exist= self.fetcher.check_user(self.uid)
         
-        if is_exist is None:
-            return
+        if is_exist is None:    #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            return None
         
         if not is_exist:
             msg = 'Not exist: %s.' %(self.uid)
             logger.info(msg)
             write_message(msg, self.window)
             
-            return
+            return False
 
         self.storage = FileStorage(self.uid, settings.MASK_FOLLOW, self.store_path)
         
@@ -228,6 +262,19 @@ class ComWeiboCrawler(object):
         parser = ComFollowsParser(self.storage)
         
         num_pages = _crawl(parser, self.uid, page=1)
+        
+        if num_pages is None:    #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            try:
+                self.storage.delete(self.storage.follows_fp, self.storage.follows_f_name)
+            except:
+                pass
+            
+            return None
+        
         if settings.PAGE_LIMIT != 0:
             if num_pages > settings.PAGE_LIMIT:
                 msg = 'For sina policy, reduce page count from %s to %s' %(num_pages, settings.PAGE_LIMIT)
@@ -245,6 +292,20 @@ class ComWeiboCrawler(object):
                 worker_manager.add_job(_crawl, parser, self.uid, pg, num_pages)
                 
             worker_manager.wait_all_complete()
+            is_None = worker_manager.get_result()
+            worker_manager.stop()
+            
+            if is_None:    #error occur: _crawl return None
+                msg = 'Error'
+                logger.info(msg)
+                write_message(msg, self.window)
+               
+                try:
+                    self.storage.delete(self.storage.follows_fp, self.storage.follows_f_name)
+                except:
+                    pass
+               
+                return None
 
         cost_time = int(time.time() - start_time)
         
@@ -275,14 +336,19 @@ class ComWeiboCrawler(object):
         write_message(msg, self.window)
         is_exist= self.fetcher.check_user(self.uid)
         
-        if is_exist is None:
-            return
+        if is_exist is None:    #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            return None
         
         if not is_exist:
             msg = 'Not exist: %s.' %(self.uid)
             logger.info(msg)
             write_message(msg, self.window)
-            return
+            
+            return False
         
         self.storage = FileStorage(self.uid, settings.MASK_FAN, self.store_path)
         
@@ -291,6 +357,19 @@ class ComWeiboCrawler(object):
         parser = ComFansParser(self.storage)
         
         num_pages = _crawl(parser, self.uid, page=1)
+        
+        if num_pages is None:    #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            try:
+                self.storage.delete(self.storage.fans_fp, self.storage.fans_f_name)
+            except:
+                pass
+            
+            return None
+        
         if settings.PAGE_LIMIT != 0:
             if num_pages > settings.PAGE_LIMIT:
                 msg = 'For sina policy, reduce page count from %s to %s' %(num_pages, settings.PAGE_LIMIT)
@@ -308,6 +387,20 @@ class ComWeiboCrawler(object):
                 worker_manager.add_job(_crawl, parser, self.uid, pg, num_pages)
             
             worker_manager.wait_all_complete()
+            is_None = worker_manager.get_result()
+            worker_manager.stop()
+            
+            if is_None:    #error occur
+                msg = 'Error'
+                logger.info(msg)
+                write_message(msg, self.window)
+                
+                try:
+                    self.storage.delete(self.storage.fans_fp, self.storage.fans_f_name)
+                except:
+                    pass
+            
+                return None
             
         cost_time = int(time.time() - start_time)
         
@@ -322,14 +415,19 @@ class ComWeiboCrawler(object):
         write_message(msg, self.window)
         is_exist= self.fetcher.check_user(self.uid)
         
-        if is_exist is None:
-            return
+        if is_exist is None:    #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            return None
         
         if not is_exist:
             msg = 'Not exist: %s.' %self.uid
             logger.info(msg)
             write_message(msg, self.window)
-            return
+            
+            return False
         
         msg = 'Crawl user(%s)\'s profile' %self.uid
         logger.info(msg)
@@ -351,14 +449,32 @@ class ComWeiboCrawler(object):
         logger.info(msg)
         write_message(msg, self.window)
                 
-        if html is None:
+        if html is None:    #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            try:
+                self.storage.delete(self.storage.infos_fp, self.storage.infos_f_name)
+            except:
+                pass
+            
             return None
         
         try:
             pq_doc = pq(html)
             parser.parse(pq_doc)
         except:
-            return None
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            try:
+                self.storage.delete(self.storage.infos_fp, self.storage.infos_f_name)
+            except:
+                pass
+            
+            return None    #error occur
 
     def crawl_msg_reposts(self):
         def _crawl(parser, msg_id, page, num_pages=''):
@@ -382,12 +498,19 @@ class ComWeiboCrawler(object):
         write_message(msg, self.window)
         msg_id = self.fetcher.check_message(self.msg_url)
         
+        if msg_id is None:      #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            return None
+                        
         if msg_id is None:
             msg = 'Not exist: %s.' %self.msg_url            
             logger.info(msg)
             write_message(msg, self.window)
             
-            return
+            return False
           
         self.msg_id = msg_id
         self.storage= FileStorage(self.msg_id, settings.MASK_REPOST, self.store_path)
@@ -396,6 +519,19 @@ class ComWeiboCrawler(object):
         
         parser = ComRepostsParser(msg_id, self.storage)
         num_pages = _crawl(parser, self.msg_id, 1)
+        
+        if num_pages is None:   #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            try:
+                self.storage.delete(self.storage.reposts_fp, self.storage.reposts_f_name)
+            except:
+                pass
+            
+            return None
+        
         pages = [i for i in xrange(2, num_pages+1)]
         if len(pages) > 0:
             n_threads = 5
@@ -406,6 +542,20 @@ class ComWeiboCrawler(object):
                 worker_manager.add_job(_crawl, parser, self.msg_id, pg, num_pages)
             
             worker_manager.wait_all_complete()
+            is_None = worker_manager.get_result()
+            worker_manager.stop()
+            
+            if is_None:    #error occur
+                msg = 'Error'
+                logger.info(msg)
+                write_message(msg, self.window)
+            
+                try:
+                    self.storage.delete(self.storage.reposts_fp, self.storage.reposts_f_name)
+                except:
+                    pass
+            
+                return None
             
         cost_time = int(time.time() - start_time)
         
@@ -437,12 +587,19 @@ class ComWeiboCrawler(object):
         write_message(msg, self.window)
         msg_id = self.fetcher.check_message(self.msg_url)
         
-        if msg_id is None:
+        if msg_id is None:      #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            return None
+            
+        if msg_id is False:
             msg = 'Not exist: %s.' %self.msg_url            
             logger.info(msg)
             write_message(msg, self.window)
             
-            return 
+            return False 
         
         self.msg_id = msg_id
         self.storage= FileStorage(self.msg_id, settings.MASK_COMMENT, self.store_path)
@@ -451,6 +608,19 @@ class ComWeiboCrawler(object):
         
         parser = ComCommentsParser(msg_id, self.storage)
         num_pages = _crawl(parser, self.msg_id, 1)
+        
+        if num_pages is None:    #error occur
+            msg = 'Error'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            try:
+                self.storage.delete(self.storage.comments_fp, self.storage.comments_f_name)
+            except:
+                pass
+            
+            return None
+        
         pages = [i for i in xrange(2, num_pages+1)]
         if len(pages) > 0:
             n_threads = 5
@@ -461,6 +631,20 @@ class ComWeiboCrawler(object):
                 worker_manager.add_job(_crawl, parser, self.msg_id, pg, num_pages)
             
             worker_manager.wait_all_complete()
+            is_None = worker_manager.get_result()
+            worker_manager.stop()
+            
+            if is_None:    #error occur
+                msg = 'Error'
+                logger.info(msg)
+                write_message(msg, self.window)
+                
+                try:
+                    self.storage.delete(self.storage.comments_fp, self.storage.comments_f_name)
+                except:
+                    pass
+                        
+                return None
         
         cost_time = int(time.time() - start_time)
             
