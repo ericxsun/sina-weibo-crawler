@@ -39,8 +39,8 @@ EXE
 using <a href='http://www.pyinstaller.org/'>Pyinstaller</a> converts this project into stand-alone executables
 
 for example:
-<p>$python pyinstall.py --onefile $crawler_dir/unix_local_login.py</p>
-<p>>python pyinstall.py --Fw $crawler_dir/win_local_login.py</p>
+<p>$python pyinstall.py --onefile --icon=$icon_logo_path $crawler_dir/unix_local_login.py</p>
+<p>>python pyinstall.py --Fw --icon=$icon_logo_path $crawler_dir/win_local_login.py</p>
 
 TODO
 ====
