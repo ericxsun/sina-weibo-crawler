@@ -218,7 +218,9 @@ class ComWeiboCrawler(object):
                ' cost time=%s sec, connections=%s' 
                %(self.uid, num_pages, cost_time, self.fetcher.n_connections))
         logger.info(msg)
-        write_message(msg, self.window) 
+        write_message(msg, self.window)
+        
+        return True
             
     def crawl_follows(self):
         def _crawl(parser, uid, page, num_pages=''):
@@ -314,6 +316,8 @@ class ComWeiboCrawler(object):
                %(self.uid, num_pages, cost_time, self.fetcher.n_connections))
         logger.info(msg)
         write_message(msg, self.window)
+        
+        return True
 
     def crawl_fans(self):
         def _crawl(parser, uid, page, num_pages=''):
@@ -410,6 +414,8 @@ class ComWeiboCrawler(object):
         logger.info(msg)
         write_message(msg, self.window)
         
+        return True
+        
     def crawl_infos(self):
         msg = 'Checking: whether user(%s) exists or not...' %self.uid
         write_message(msg, self.window)
@@ -464,6 +470,8 @@ class ComWeiboCrawler(object):
         try:
             pq_doc = pq(html)
             parser.parse(pq_doc)
+            
+            return True
         except:
             msg = 'Error'
             logger.info(msg)
@@ -563,7 +571,9 @@ class ComWeiboCrawler(object):
                ' cost time=%s sec, connections=%s' 
                %(self.msg_id, num_pages, cost_time, self.fetcher.n_connections))
         logger.info(msg)
-        write_message(msg, self.window) 
+        write_message(msg, self.window)
+        
+        return True 
     
     def crawl_msg_comments(self):
         def _crawl(parser, msg_id, page, num_pages=''):
@@ -653,3 +663,5 @@ class ComWeiboCrawler(object):
                %(self.msg_id, num_pages, cost_time, self.fetcher.n_connections))
         logger.info(msg)
         write_message(msg, self.window)
+        
+        return True
