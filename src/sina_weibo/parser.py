@@ -237,18 +237,18 @@ class ComWeibosParser(object):
         pq_doc.find('div.WB_detail').each(_parse_weibo)
         
         #--page count
-        cur_pg = 1
+#         cur_pg = 1
         cnt = 1
         try:
             pg = pq_doc.find('div.W_pages span.list a.W_moredown')
             pg_info = pg.attr('action-data').split('&')
-            cur_pg = int(pg_info[0].split('currentPage=')[-1])
+#             cur_pg = int(pg_info[0].split('currentPage=')[-1])
             cnt = int(pg_info[1].split('countPage=')[-1])
         except:
             pass
         
         #debug
-        print 'parse weibo: current page:%s-%s' %(cnt, cur_pg)
+#         print 'parse weibo: current page:%s-%s' %(cnt, cur_pg)
         return cnt
 
 class ComFollowsParser(object):
