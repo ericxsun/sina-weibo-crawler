@@ -14,14 +14,18 @@ QUERY_FOLLOWS = (('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
                  ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
                   '"Pl_Official_LeftHisRelation__15"'), \
                  ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
-                  '"Pl_Official_LeftHisRelation__21"'))
+                  '"Pl_Official_LeftHisRelation__21"'), \
+                 ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
+                  '"Pl_Official_LeftHisRelation__16"'))
 
 QUERY_FANS    = (('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
                     '"pl_relation_hisFans"'), \
                  ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
                   '"Pl_Official_LeftHisRelation__15"'), \
                  ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
-                  '"Pl_Official_LeftHisRelation__21"'))
+                  '"Pl_Official_LeftHisRelation__21"'), \
+                 ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
+                  '"Pl_Official_LeftHisRelation__16"'))
 
 QUERY_INFO    = (('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
                     '"pl_profile_photo"'), \
@@ -38,7 +42,9 @@ QUERY_INFO    = (('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
                   '"pl_profile_infoTag"'),   \
                  ('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
                   '"pl_profile_infoGrow"'), \
-                 ('<script>FM.view({"ns":"","domid":"Pl_Official_RightGrow__14"'))
+                 ('<script>FM.view({"ns":"","domid":"Pl_Official_RightGrow__14"'),\
+                 ('<script>FM.view({"ns":"","domid":"Pl_Official_LeftInfo__14"'), \
+                 ('<script>FM.view({"ns":"","domid":"Pl_Official_RightGrow__15"'))
 
 MASK_WEIBO  = 0b100000
 MASK_FOLLOW = 0b010000
