@@ -149,23 +149,17 @@ def main(fetcher, **kwargs):
             t_id_s = time.time()
             
             #repost
-            crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
-            if crawler.crawl_msg_reposts() is None:
-                n_errors += 1
+            if fetch_data == 'repost':
+                crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
+                if crawler.crawl_msg_reposts() is None:
+                    n_errors += 1
             
-            n_connections += fetcher.n_connections
-            fetcher.n_connections = 0
-            
-            sec = 3
-            msg = 'Take a rest: %d seconds, and start to crawl the comments..' %sec
-            write_message(msg, window)
-            time.sleep(sec)
-            
-            #comment
-            crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
-            if crawler.crawl_msg_comments() is None:
-                n_errors += 1
-    
+            #comment    
+            elif fetch_data == 'comment':           
+                crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
+                if crawler.crawl_msg_comments() is None:
+                    n_errors += 1
+                
             t_id_e = time.time()
             dt_id  = int(t_id_e - t_id_s)
             

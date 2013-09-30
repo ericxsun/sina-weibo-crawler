@@ -23,6 +23,7 @@ LICENCE    = settings.LICENCE
 VERSION    = settings.LOCAL_VERSION
 
 DATA_CHOICES = settings.DATA_CHOICES
+MSG_CHOICES  = settings.MSG_CHOICES
 
 class StartCrawl(threading.Thread):
     def __init__(self, website, fetcher, fetch_data, ids, ids_type, 
@@ -264,12 +265,22 @@ class Frame(wx.Frame):
         self.msg_url_txt.Show(False)
         
         #Fetch Data Type
+        #weibo, follow, fan, info
         self.fetch_data_type= wx.RadioBox(parent=self.panel, id=-1, label='Fetch Data Type',
                                           pos=(390, 72), size=(150, 98),
                                           majorDimension=2,
                                           style=wx.RA_SPECIFY_COLS,
                                           choices=DATA_CHOICES)
         self.fetch_data_type.SetSelection(0)
+        
+        #msg-repost or comment
+        self.fetch_data_type_msg= wx.RadioBox(parent=self.panel, id=-1, label='Fetch Data Type',
+                                              pos=(390, 72), size=(150, 98),
+                                              majorDimension=2,
+                                              style=wx.RA_SPECIFY_COLS,
+                                              choices=MSG_CHOICES)
+        self.fetch_data_type_msg.SetSelection(0)
+        self.fetch_data_type_msg.Show(False)
         
         #
         wx.StaticLine(parent=self.panel, id=-1, pos=(0, 176), size=(600, -1), 
@@ -334,6 +345,9 @@ class Frame(wx.Frame):
         self.msg_url_txt.Show(False)
     
         self.fetch_data_type.Enable(True)
+        self.fetch_data_type.Show(True)
+        self.fetch_data_type_msg.Enable(False)
+        self.fetch_data_type_msg.Show(False)
         
         self.single_flag = True
         
@@ -347,6 +361,9 @@ class Frame(wx.Frame):
         self.msg_url_txt.Show(False)
         
         self.fetch_data_type.Enable(True)
+        self.fetch_data_type.Show(True)
+        self.fetch_data_type_msg.Enable(False)
+        self.fetch_data_type_msg.Show(False)
         
         self.single_flag = False
     
@@ -360,6 +377,9 @@ class Frame(wx.Frame):
         self.msg_url_txt.Show(True)
         
         self.fetch_data_type.Enable(False)
+        self.fetch_data_type.Show((False))
+        self.fetch_data_type_msg.Enable(True)
+        self.fetch_data_type_msg.Show(True)
         
         self.single_flag = False        
     
@@ -385,6 +405,8 @@ class Frame(wx.Frame):
         id_type = 'uid'
         
         if not self.msg_url_btn.IsEnabled():
+            fetch_data = MSG_CHOICES[self.fetch_data_type_msg.GetSelection()]
+            
             id_type = 'msg_url'
             _ids = self.msg_url_txt.Value.split(';')
             _ids = [_id.strip().encode('UTF-8') for _id in _ids if len(_id) > 0]
@@ -403,10 +425,17 @@ class Frame(wx.Frame):
             if len(self.ids) == 0:
                 wx.MessageBox(message='No Message URL, please retry.')
                 self.msg_url_txt.SetValue('')
+                
                 return
+            
+            self.msg_url_txt.SetValue('')
+            self.fetch_data_type_msg.Enable(False)
         else:
+            fetch_data = DATA_CHOICES[self.fetch_data_type.GetSelection()]
+            
             if not self.single_user_id_btn.IsEnabled():
                 wx.MessageBox(message='Selected user in search result. At present, not implemented.')
+                
                 return
             elif not self.multi_user_id_btn.IsEnabled():
                 _ids = self.multi_user_id_txt.Value.split(';')
@@ -425,9 +454,12 @@ class Frame(wx.Frame):
                 if len(self.ids) == 0:
                     wx.MessageBox(message='No User ID, please retry.')
                     self.multi_user_id_txt.SetValue('')
+                    
                     return
+                
+                self.multi_user_id_txt.SetValue('')
+                self.fetch_data_type.Enable(False)
 
-        fetch_data = DATA_CHOICES[self.fetch_data_type.GetSelection()]
         wbs = self.website_display
         fetcher = self.fetcher
         ids = self.ids
@@ -440,9 +472,7 @@ class Frame(wx.Frame):
         self.single_user_id_btn.Enable(False)
         self.multi_user_id_btn.Enable(False)
         self.msg_url_btn.Enable(False)
-        
-        self.fetch_data_type.Enable(False)
-        
+            
         self.start_btn.Enable(False)
         
     def finished(self):
@@ -453,6 +483,9 @@ class Frame(wx.Frame):
         self.msg_url_btn.Enable(True)
         
         self.fetch_data_type.Enable(True)
+        self.fetch_data_type.Show(True)
+        self.fetch_data_type_msg.Enable((False))
+        self.fetch_data_type_msg.Show(False)
         
         self.start_btn.Enable(True)
 
