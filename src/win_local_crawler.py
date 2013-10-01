@@ -428,7 +428,6 @@ class Frame(wx.Frame):
                 
                 return
             
-            self.msg_url_txt.SetValue('')
             self.fetch_data_type_msg.Enable(False)
         else:
             fetch_data = DATA_CHOICES[self.fetch_data_type.GetSelection()]
@@ -457,7 +456,6 @@ class Frame(wx.Frame):
                     
                     return
                 
-                self.multi_user_id_txt.SetValue('')
                 self.fetch_data_type.Enable(False)
 
         wbs = self.website_display
