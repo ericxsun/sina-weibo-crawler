@@ -8,6 +8,8 @@ from storage import FileStorage
 import settings
 import time
 import random
+import codecs
+import os
 
 def adjust_delay(dt):
     '''
@@ -39,12 +41,14 @@ def main(fetcher, **kwargs):
     assert (fetch_data is not None and uids is not None) or (msg_urls is not None)
     
     n_ids = 0
-    
-    start_time = time.time()
-    last_time  = start_time
-    
     n_connections = 0
     n_errors = 0
+    
+    succeed_fp   = codecs.open(os.path.join(store_path, 'succeed-id.txt'),   'w+', 'utf-8')
+    error_fp     = codecs.open(os.path.join(store_path, 'error-id.txt'),     'w+', 'utf-8')
+    not_exist_fp = codecs.open(os.path.join(store_path, 'not-exist-id.txt'), 'w+', 'utf-8')
+    
+    start_time = time.time()
     
     if uids is not None:
         fetch_data = fetch_data.lower()
@@ -58,21 +62,7 @@ def main(fetcher, **kwargs):
         for uid in uids:
             fetcher.n_connections = 0
             
-            now_time = time.time()
-            dt       = int(now_time - last_time)
-            if dt >= 3600:
-                msg  = '-------\n'
-                msg += 'Having Crawled for %d seconds, take a rest: 1 hours' %dt
-                msg += '\n-------'
-                
-                logger.info(msg)
-                write_message(msg, window)
-                
-                time.sleep(3600)
-                
-                last_time = time.time()
-            
-            if dt < 3600 and dt_id > 0:
+            if dt_id > 0:
                 delay = adjust_delay(dt_id)
                 msg  = '-------\n'
                 msg += 'Take a rest: %d seconds, and start new crawler..' %delay
@@ -85,20 +75,51 @@ def main(fetcher, **kwargs):
             
             if fetch_data == 'weibos':
                 crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
-                if crawler.crawl_weibos() is None:
+                
+                res = crawler.crawl_weibos()
+                if res is None:
                     n_errors += 1
+                    error_fp.write(str(uid) + '\n')
+                elif res is False:
+                    not_exist_fp.write(str(uid) + '\n')
+                elif res is True:
+                    succeed_fp.write(str(uid) + '\n')
+                    
             elif fetch_data == 'follows':
                 crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
-                if crawler.crawl_follows() is None:
+                
+                res = crawler.crawl_follows()
+                if res is None:
                     n_errors += 1
+                    error_fp.write(str(uid) + ';')
+                elif res is False:
+                    not_exist_fp.write(str(uid) + ';')
+                elif res is True:
+                    succeed_fp.write(str(uid) + ';')
+                    
             elif fetch_data == 'fans':
                 crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
-                if crawler.crawl_fans() is None:
+                
+                res = crawler.crawl_fans()
+                if res is None:
                     n_errors += 1
+                    error_fp.write(str(uid) + ';')
+                elif res is False:
+                    not_exist_fp.write(str(uid) + ';')
+                elif res is True:
+                    succeed_fp.write(str(uid) + ';')
+                
             elif fetch_data == 'infos':
                 crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
-                if crawler.crawl_infos() is None:
+                
+                res = crawler.crawl_infos()
+                if res is None:
                     n_errors += 1
+                    error_fp.write(str(uid) + ';')
+                elif res is False:
+                    not_exist_fp.write(str(uid) + ';')
+                elif res is True:
+                    succeed_fp.write(str(uid) + ';')
             
             t_id_e = time.time()
             dt_id  = int(t_id_e - t_id_s)
@@ -120,24 +141,10 @@ def main(fetcher, **kwargs):
         for msg_url in msg_urls:
             fetcher.n_connections = 0
             
-            now_time = time.time()
-            dt       = int(now_time - last_time)
-            if dt >= 3600:
-                msg  = '-------\n'
-                msg += 'Having Crawled for %d seconds, take a rest: 1 hours' %dt
-                msg += '\n-------'
-                
-                logger.info(msg)
-                write_message(msg, window)
-                
-                time.sleep(3600)
-                
-                last_time = time.time()
-            
             if not msg_url.startswith('http://weibo.com/'):
                 msg_url = 'http://weibo.com/' + msg_url.replace('/', '')
             
-            if dt < 3600 and dt_id > 0:
+            if dt_id > 0:
                 delay = adjust_delay(dt_id)
                 msg  = '-------\n'
                 msg += 'Take a rest: %d seconds, and start new crawler..' %delay
@@ -151,14 +158,28 @@ def main(fetcher, **kwargs):
             #repost
             if fetch_data == 'repost':
                 crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
-                if crawler.crawl_msg_reposts() is None:
+                
+                res = crawler.crawl_msg_reposts()
+                if res is None:
                     n_errors += 1
+                    error_fp.write(str(msg_url) + ';')
+                elif res is False:
+                    not_exist_fp.write(str(msg_url) + ';')
+                elif res is True:
+                    succeed_fp.write(str(msg_url) + ';')
             
             #comment    
             elif fetch_data == 'comment':           
                 crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
-                if crawler.crawl_msg_comments() is None:
+                
+                res = crawler.crawl_msg_comments()
+                if res is None:
                     n_errors += 1
+                    error_fp.write(str(msg_url) + ';')
+                elif res is False:
+                    not_exist_fp.write(str(msg_url) + ';')
+                elif res is True:
+                    succeed_fp.write(str(msg_url) + ';')
                 
             t_id_e = time.time()
             dt_id  = int(t_id_e - t_id_s)
@@ -168,7 +189,11 @@ def main(fetcher, **kwargs):
             update_progress_bar(window, i*100/n_ids)
             
             n_connections += fetcher.n_connections
-        
+    
+    succeed_fp.close()
+    error_fp.close()
+    not_exist_fp.close()    
+    
     cost_time = int(time.time() - start_time)
     
     d, h, m, s = format_delta_time(cost_time)
@@ -176,7 +201,7 @@ def main(fetcher, **kwargs):
     msg += 'Crawled [user|message]ids: %d, cost time: %d(d)-%d(h)-%d(m)-%d(s), connections: %d' %(n_ids, d, h, m, s, n_connections)
     
     accuracy = 1 - n_errors / n_ids
-    msg += '\nAccuracy:%.2f' %(accuracy)
+    msg += '\nAccuracy:%d%%' %(accuracy*100)
     
     write_message('=======', window)
     logger.info(msg)
