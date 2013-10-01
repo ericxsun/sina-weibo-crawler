@@ -31,7 +31,8 @@ sina_weibo.main(fetcher, fetch_data='weibos', store_path='./file/', uids=uids)
 
 print 'crawl reposts and comments'
  
-sina_weibo.main(fetcher, store_path='./file/', msg_urls=msg_urls)
+sina_weibo.main(fetcher, store_path='./file/', msg_urls=msg_urls, fetch_data='repost')
+sina_weibo.main(fetcher, store_path='./file/', msg_urls=msg_urls, fetch_data='comment')
 
 cost_time = int(time.time() - start)
 print 'finished: # connections: %s, cost time: %s' %(fetcher.n_connections, cost_time)
