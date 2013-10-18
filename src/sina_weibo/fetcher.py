@@ -199,7 +199,7 @@ class ComWeiboFetcher(object):
         headers['Referer'] = 'http://weibo.com/'
 
         req = self.pack_request(url, headers)
-        self.urlopen_read(req)
+        urllib2.urlopen(req)
     
     def get_random_nonce(self, range_num=6):
         nonce = ''
