@@ -634,15 +634,13 @@ class ComWeiboFetcher(object):
                         page = self.gzip_data(resp.read())
                     else:
                         page = resp.read()
+                
+                is_exist = not (u'错误提示 新浪微博' in page) 
+                is_exist = is_exist and ("$CONFIG['oid']='%s'" %uid in page 
+                                        or "$CONFIG['oid'] = '%s'" %uid in page
+                                        or u'赶快注册微博粉我吧' in page)
                     
-                    #not login-exist or login-exist
-                    is_exist = ((u'赶快注册微博粉我吧' in page) or 
-                                (not (u'错误提示 新浪微博' in page)) or
-                                (not (u'抱歉，您当前访问的帐号异常，暂时无法访问。' in page)) or 
-                                (not (u'抱歉，你访问的页面地址有误，或者该页面不存在') in page)
-                                )
-                    
-                    return is_exist
+                return is_exist
             except urllib2.HTTPError, e:
                 #http redirect
                 if e.code == 302 and e.geturl is not None:
