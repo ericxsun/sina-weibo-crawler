@@ -42,7 +42,7 @@ class StartCrawl(threading.Thread):
         
     def run(self):
         #start the works        
-        if self.website == settings.SINA_WEIBO:
+        if self.website == settings.COMWEIBO:
             if self.ids_type == 'uid':
                 sina_weibo.main(fetcher=self.fetcher, uids=self.ids, 
                                 fetch_data=self.fetch_data, 
@@ -50,7 +50,9 @@ class StartCrawl(threading.Thread):
             elif self.ids_type == 'msg_url':
                 sina_weibo.main(fetcher=self.fetcher, msg_urls=self.ids,
                                 store_path=self.store_path, window=self.window)
-        
+        elif self.website == settings.CNWEIBO:
+            msg = 'For weib.cn, not implemented in current version.'
+            self.window.write_logs(msg)
         elif self.website == settings.TWITTER:
             msg = 'For twitter, not implemented in current version.'
             self.window.write_logs(msg)
