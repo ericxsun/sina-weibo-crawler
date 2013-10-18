@@ -199,7 +199,7 @@ class ComWeiboFetcher(object):
         headers['Referer'] = 'http://weibo.com/'
 
         req = self.pack_request(url, headers)
-        urllib2.urlopen(req)
+        self.urlopen_read(req)
     
     def get_random_nonce(self, range_num=6):
         nonce = ''
@@ -724,7 +724,7 @@ class ComWeiboFetcher(object):
         
         def _get_second_part(headers, body, url):
             body['__rnd']    = str(int(time.time() * 1000))
-            body['count']    = '15'
+            body['count']    = 15
             body['pagebar']  = 0
             body['pre_page'] = body['page']
             
@@ -739,8 +739,8 @@ class ComWeiboFetcher(object):
             
         def _get_third_part(headers, body, url):
             body['__rnd']    = str(int(time.time() * 1000))
-            body['count'] = '15'
-            body['pagebar'] = '1'
+            body['count'] = 15
+            body['pagebar'] = 1
             body['pre_page'] = body['page']
         
             url = url + urllib.urlencode(body)
@@ -752,7 +752,7 @@ class ComWeiboFetcher(object):
             except ValueError:
                 return page
         
-        url = 'http://weibo.com/aj/mblog/mbloglist?uid=%s' % uid
+        url = 'http://weibo.com/aj/mblog/mbloglist?'
         
         headers = self.get_headers(url)
         headers['Accept']  = '*/*'
@@ -760,15 +760,15 @@ class ComWeiboFetcher(object):
         del headers['Accept-encoding']     
         
         body = {
-            '__rnd'   : '',
-            '_k'      : '',
-            '_t'      : '0',
-            'count'   : '50',
-            'end_id'  : '',
-            'max_id'  : '',
-            'page'    : page,
-            'pagebar' : '',
-            'pre_page': '0',
+            '__rnd'   : '',     #访问此页的时间，以秒表示的13位整数
+            '_k'      : int(time.time() * (10**6)),     #本次登录第一次访问此微博的时间，16位整数
+            '_t'      : 0,      #
+            'count'   : 50,   #第一次访问为50,第二次及以后，为15
+            'end_id'  : '',     #最新的这一项微博的mid
+            'max_id'  : '',     #已经访问的， 
+            'page'    : page,   #要访问的页码
+            'pagebar' : '',     #第二次是0，第三次是1，第一次没有这项
+            'pre_page': 0,    #第二次和第三次都是本页页码，第一次访问是上页页码
             'uid'     : uid
         }
                 
