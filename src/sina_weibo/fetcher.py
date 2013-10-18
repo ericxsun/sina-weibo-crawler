@@ -13,6 +13,7 @@ import cookielib
 import datetime
 import gzip
 import json
+import lxml.html as HTML
 import os
 import random
 import re
@@ -24,7 +25,7 @@ import urllib
 import urllib2
 
 socket.setdefaulttimeout(10)
-
+    
 class ComWeiboFetcher(object):
     n_connections = 0
     
@@ -36,7 +37,7 @@ class ComWeiboFetcher(object):
         urllib2.install_opener(self.opener)
         
         self.soft_path = SOFT_PATH
-        self.cookie_file = os.path.join(self.soft_path, 'cookie.txt')
+        self.cookie_file = os.path.join(self.soft_path, settings.COMWEIBO_COOKIE)
         
         self.proxy_ip = kwargs.get('proxy_ip', None)
         
@@ -87,8 +88,8 @@ class ComWeiboFetcher(object):
             except Exception, e:
                 if i < tries - 1:
                     sec = (i + 1) * 5
-                    msg = ('Error in urlopen_read. Take a rest: %s seconds, and retry.'
-                           %sec)
+                    msg = ('Error in urlopen_read: %s\nTake a rest: %s seconds, and retry.'
+                           %(str(e), sec))
                     write_message(msg, self.window)
 
                     time.sleep(sec)
@@ -574,12 +575,12 @@ class ComWeiboFetcher(object):
             
         login_ok = True
         
-        self.cookie_file = os.path.join(soft_path, 'cookie.txt')
+        self.cookie_file = os.path.join(soft_path, settings.COMWEIBO_COOKIE)
         if os.path.exists(self.cookie_file):
             msg = 'cookie exist.'
             write_message(msg)
             
-            if 'Set-Cookie' not in open(self.cookie_file,'r').read():
+            if 'Set-Cookie' not in open(self.cookie_file, 'r').read():
                 msg = 'but does not contain a valid cookie.'
                 write_message(msg)
                 
@@ -643,7 +644,7 @@ class ComWeiboFetcher(object):
                 return is_exist
             except urllib2.HTTPError, e:
                 #http redirect
-                if e.code == 302 and e.geturl is not None:
+                if e.code == 302 and e.geturl() is not None:
                     is_exist = True
                 else:
                     is_exist = False
@@ -846,3 +847,319 @@ class ComWeiboFetcher(object):
         num_pages= int(data['page']['totalpage'])
         
         return html, num_pages    
+
+def urldecode(link):
+    decodes = {}
+    
+    if '?' in link:
+        params = link.split('?')[1]
+        
+        for param in params.split('&'):
+            k, v = tuple(param.split('='))
+            decodes[k] = urllib.unquote(v)
+            
+    return decodes
+
+class CnWeiboFetcher(object):
+    n_connections = 0
+     
+    def __init__(self, **kwargs):
+        self.cj = cookielib.LWPCookieJar()
+        self.cookie_support = urllib2.HTTPCookieProcessor(self.cj)
+        self.opener = urllib2.build_opener(self.cookie_support, 
+                                           urllib2.HTTPHandler)
+        urllib2.install_opener(self.opener)
+         
+        self.soft_path = SOFT_PATH
+        self.cookie_file = os.path.join(self.soft_path, settings.CNWEIBO_COOKIE)
+         
+        self.proxy_ip = kwargs.get('proxy_ip', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+         
+        self.window = kwargs.get('window', None)
+        
+    def gzip_data(self, data):
+        if 0 == len(data) or data is None:
+            return data
+         
+        data = StringIO.StringIO(data)
+        data = gzip.GzipFile(fileobj=data).read()
+         
+        return data
+     
+    def urlopen_read(self, req):
+        tries = 10
+         
+        for i in range(tries):
+            try:
+                self.n_connections += 1
+                 
+                page = None
+                with contextlib.closing(urllib2.urlopen(req)) as resp:
+                    if resp.info().get('Content-Encoding') == 'gzip':
+                        page = self.gzip_data(resp.read())
+                    else:
+                        page = resp.read()
+                return page
+            except Exception, e:
+                if i < tries - 1:
+                    sec = (i + 1) * 5
+                    msg = ('Error in urlopen_read: %s\nTake a rest: %s seconds, and retry.'
+                           %(str(e), sec))
+                    write_message(msg, self.window)
+ 
+                    time.sleep(sec)
+                else:
+                    msg = 'Exit incorrect. %s' %str(e)
+                    logger.info(msg)
+                    write_message(msg, self.window)
+                     
+                    return None
+     
+    def get_headers(self, url, user_agent=''):
+        headers = {}
+
+        if user_agent:
+            headers['User-Agent'] = user_agent
+        else:
+            headers['User-Agent'] = ('Mozilla/5.0 (X11; Linux i686; rv:24.0) Gecko/20100101 Firefox/24.0')
+        headers['Accept'] = ('text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+        headers['Accept-Language'] = 'en-US,en;q=0.5'
+        headers['Accept-encoding'] = 'gzip, deflate'
+        headers['Connection'] = 'keep-alive'
+        #headers['Keep-Alive'] = '9000'
+         
+        return headers
+     
+    def pack_request(self, url='', headers={}, data=None):
+        if data:
+            headers['Content-Type'] = ('application/x-www-form-urlencoded;'
+                                       'charset=utf-8')
+            data = urllib.urlencode(data)
+         
+        req = urllib2.Request(url=url, data=data, headers=headers)
+         
+        proxy_ip = self.proxy_ip
+        if proxy_ip and '127.0.0.1' not in proxy_ip:
+            if proxy_ip.startswith('http'):
+                proxy_ip = proxy_ip.replace('http://', '')
+            req.set_proxy(proxy_ip, 'http')
+         
+        return req  
+     
+    def get_login_form(self):
+        url = 'http://3g.sina.com.cn/prog/wapsite/sso/login.php?ns=1&revalid=2&backURL=http%3A%2F%2Fweibo.cn%2F&backTitle=%D0%C2%C0%CB%CE%A2%B2%A9&vt='
+        
+        headers = self.get_headers(url)
+        headers['Accept'] = '*/*'
+        headers['Referer']= 'http://weibo.cn'
+        del headers['Accept-encoding']
+         
+        req = self.pack_request(url, headers)
+         
+        rand     = None
+        passwd_s = None 
+        vk       = None 
+        for _ in range(3):
+            try:
+                data = None
+                 
+                with contextlib.closing(urllib2.urlopen(req)) as resp:
+                    data = resp.read()
+                 
+                rand     = HTML.fromstring(data).xpath('//form/@action')[0]
+                passwd_s = HTML.fromstring(data).xpath("//input[@type='password']/@name")[0]
+                vk       = HTML.fromstring(data).xpath("//input[@name='vk']/@value")[0]
+                     
+                return rand, passwd_s, vk 
+            except Exception, e:
+                msg = 'get login form error: %s' %str(e)
+                logger.info(msg)
+                write_message(msg, self.window)
+                 
+                pass
+             
+        return rand, passwd_s, vk
+
+    def login(self, login_user=None, login_pwd=None):
+        if self.username is None or self.password is None:
+            self.username = login_user
+            self.password = login_pwd
+        
+        assert self.username is not None and self.password is not None
+            
+        rand, passwd_s, vk = self.get_login_form()
+        postdata = {
+            'mobile'   : self.username,
+            passwd_s   : self.password,
+            'remember' : 'on',
+            'backURL'  : 'http://weibo.cn/',
+            'backTitle': '新浪微博',
+            'vk'       : vk,
+            'submit'   : '登录',
+            'encoding' : 'utf-8'
+        }
+        
+        url  = 'http://3g.sina.com.cn/prog/wapsite/sso/' + rand
+        self.headers = self.get_headers(url)
+        req  = self.pack_request(url, self.headers, postdata)
+        page = self.urlopen_read(req)
+
+        link = HTML.fromstring(page).xpath("//a/@href")[0]
+        if not link.startswith('http://'): 
+            link = 'http://weibo.cn/%s' % link
+        
+        req = urllib2.Request(link, headers=self.headers)
+        self.urlopen_read(req)
+        link = urldecode(link)
+        
+        try:
+            urldecode(link['u'])
+            self.cj.save(self.cookie_file, True, True)
+            
+            msg = 'weibo.cn: login succeed.'
+            write_message(msg, self.window)
+            
+            return True
+        except KeyError:
+            return False
+    
+    def get_content_head(self, url, headers={}, data=None):
+        content = ''
+        try:
+            if os.path.exists(self.cookie_file):
+                self.cj.revert(self.cookie_file, True, True)
+                self.cookie_support = urllib2.HTTPCookieProcessor(self.cj)
+                self.opener = urllib2.build_opener(self.cookie_support, urllib2.HTTPHandler)
+                urllib2.install_opener(self.opener)
+            else:
+                return ''
+            
+            self.n_connections += 1
+            
+            req = self.pack_request(url=url, headers=headers, data=data)
+            resp= self.opener.open(req, timeout=10)
+            
+            if resp.info().get('Content-Encoding') == 'gzip':
+                content = self.gzip_data(resp.read())
+            else:
+                content = resp.read()
+        except urllib2.HTTPError, e:
+            return e.code
+        except Exception, e:
+            msg = 'Error in get_content. %s' %str(e)
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            content = ''
+            
+        return content
+    
+    def clear_cookie(self, cookie_path):
+        try:
+            os.remove(cookie_path)
+        except:
+            pass
+    
+    def valid_cookie(self, html=''):
+        html = str(html)
+        login_ok = True
+        
+        if not html:
+            url     = 'http://weibo.cn/kaifulee'
+            headers = self.get_headers(url)
+            html    = self.get_content_head(url, headers=headers)
+            
+        if not html:
+            if not self.login():
+                msg = 'need relogin.'
+                logger.info(msg)
+                write_message(msg, self.window)
+         
+                self.clear_cookie(self.cookie_file)
+            
+                login_ok = False
+            else:
+                login_ok = True
+                
+        return login_ok
+    
+    def check_cookie(self, user=None, pwd=None, soft_path=None):
+        if user is None or pwd is None:
+            user = self.username
+            pwd  = self.password
+        
+        assert(user is not None and pwd is not None)
+        
+        if soft_path is None:
+            soft_path = self.soft_path
+        
+        login_ok = True
+        self.cookie_file = os.path.join(soft_path, settings.CNWEIBO_COOKIE)
+        if os.path.exists(self.cookie_file):
+            msg = 'cooke exist.'
+            write_message(msg)
+            
+            if 'Set-Cookie' not in open(self.cookie_file,'r').read():
+                msg = 'but does not contain a valid cookie.'
+                write_message(msg)
+                
+                login_ok = self.login(user, pwd)
+        else:
+            login_ok = self.login(user, pwd)
+            
+        if login_ok:
+            return self.valid_cookie()
+        else:
+            return False 
+    
+    def check_user(self, uid):
+        url = 'http://weibo.cn/u/%s' %(uid)
+        
+        headers = self.get_headers(url)
+        headers['Accept'] = '*/*'
+        headers['Referer']= 'http://weibo.cn/'
+        
+        req = self.pack_request(url, headers)
+        
+        tries = 10
+        for _ in range(tries):
+            try:
+                self.n_connections += 1
+                
+                page = None
+                with contextlib.closing(urllib2.urlopen(req)) as resp:
+                    if resp.info().get('Content-Encoding') == 'gzip':
+                        page = self.gzip_data(resp.read())
+                    else:
+                        page = resp.read()
+                         
+                #not login
+                if u'登录' in page:
+                    if not self.check_cookie():
+                        msg = 'Error in check user: login failed.'
+                        write_message(msg, self.window)
+                        
+                        return None
+                    
+                return  not (u'用户不存在' in page or 'User does not exists' in page)
+            except Exception, e:
+                msg = 'Error in check_user: exit Exception. %s' %str(e)
+                logger.info(msg)
+                write_message(msg, self.window)
+                
+                return None  
+    
+    def check_message(self, msg_url):
+        pass
+    
+    def fetch(self, url):
+        headers = self.get_headers(url)
+        headers['Accept'] = '*/*'
+        headers['Referer']= 'http://weibo.cn'
+        
+        req = self.pack_request(url, headers)
+        page= self.urlopen_read(req)
+        
+        return page
