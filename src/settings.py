@@ -3,11 +3,12 @@
 HOST = ''
 PORT = 8000
 
-SINA_WEIBO = 'SinaWeibo'
-TWITTER    = 'Twitter'
-FACEBOOK   = 'Facebook'
+COMWEIBO = 'weibo.com'
+CNWEIBO  = 'weibo.cn'
+TWITTER  = 'twitter.com'
+FACEBOOK = 'facebook.com'
 
-SITE_CHOICES = [SINA_WEIBO, TWITTER, FACEBOOK]
+SITE_CHOICES = [COMWEIBO, CNWEIBO, TWITTER, FACEBOOK]
 DATA_CHOICES = ['weibos', 'follows', 'fans', 'infos']
 MSG_CHOICES  = ['repost', 'comment']
 
