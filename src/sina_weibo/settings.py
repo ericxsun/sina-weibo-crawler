@@ -1,4 +1,6 @@
 # encoding: utf-8
+COMWEIBO_COOKIE = 'weibo.com.cookie.dat'
+CNWEIBO_COOKIE  = 'weibo.cn.cookie.dat'
 
 PAGE_LIMIT = 10
 

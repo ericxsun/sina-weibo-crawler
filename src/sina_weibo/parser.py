@@ -715,3 +715,288 @@ class ComCommentsParser(object):
             self.storage.save_msg_comment(info)
             
         pq_doc.find('dl.comment_list dd').each(_parse)        
+
+
+class CnWeibosParser(object):
+    def __init__(self, uid, storage):
+        self.uid = uid
+        self.storage = storage
+        
+    def parse(self, pq_doc):
+        def _parse_msg(node):
+            '''
+            <div class="WB_text" node-type="feed_list_[content|reason]">
+                abcdefg***<img **>....
+            </div>
+            '''
+            
+            return node.text()
+        
+        def _parse_media(node):
+            '''
+            <ul class="WB_meida_list clearfix" nodet-type="feed_list_media_prev">
+                ???
+            </ul>
+            or 
+            <div node-type="feed_list_media_prev">
+                <ul class="WB_media_list clearfix">
+                    ???
+                </ul>
+            </div>
+            
+            current version: not extract the detail information of medias
+            '''
+            
+            return (node.html() is not None)
+        
+        def _parse_map(node):
+            '''
+            <div class="map_data">
+                <span  class="W_ico16 icon_locate"></span>
+                ???
+                <a action-data="??" action-type="feed_list_geo_info" href="??">显示地图</a>
+            </div>
+            '''
+            try:
+                return node.text().split('-')[0].strip().replace(',', '-')
+            except AttributeError:
+                return None
+        
+        def _parse_from(node):
+            '''
+            <div class="WB_from">
+                <a class="S_link2 WB_time" href="/uid/shorturl" title="time">**</a>
+                <a class="S_link2" rel="nofollow" **>**</a>
+            </div>
+            '''
+            
+            url_a   = node.children('a[node-type="feed_list_item_date"]')
+            msgurl  = 'http://weibo.com' + url_a.attr('href')
+            msgtime = url_a.attr('date')[0:10]
+            msgfrom = node.children('a[rel="nofollow"]').text()
+
+            return msgurl, msgtime, msgfrom
+        
+        def _parse_handle(node):
+            '''
+            <div class="WB_handle">
+                <a action-type="feed_list_like">(??)</a>
+                <a action-type="feed_list_forward">转发(??)</a>
+                <a action-type="feed_list_favorite">收藏(??)</a>
+                <a action-type="feed_list_comment">评论(??)</a>
+            </div>
+            '''
+            
+            n_likes    = '0'
+            n_forwards = '0'
+            n_favorites= '0'
+            n_comments = '0'
+            
+            st = node.text()
+            if st is not None and len(st) > 0:
+                st = st.split('|')
+                for s in st:
+                    if s is not None and '(' in s:
+                        s = s.strip()
+                         
+                        if len(s.split('(')[0]) == 0:
+                            n_likes = s.split('(')[-1].strip(')')[0]
+                        elif s.split('(')[0] == u'转发':
+                            n_forwards = s.split('(')[-1].strip(')')[0]
+                        elif s.split('(')[0] == u'收藏':
+                            n_favorites = s.split('(')[-1].strip(')')[0]
+                        elif s.split('(')[0] == u'评论':
+                            n_comments = s.split('(')[-1].strip(')')[0]       
+             
+            return n_likes, n_forwards, n_favorites, n_comments
+        
+        def _parse_msg_id(node):
+            '''
+            <div class="WB_handle">
+                <a action-type="feed_list_like" action-data=".&mid=*&">(??)</a>
+                ...
+            </div>
+            '''
+            
+            a = node.find('a[action-type="feed_list_like"]')
+            try:
+                return a.attr('action-data').split('&mid=')[-1].split('&')[0]
+            except:
+                return ''
+            
+        def _parse_forward_info(node):
+            '''
+            <div class="WB_info">
+                <a class="WB_name S_func3" nick-name="??" usercard="id=??" node-type="feed_list_originNick">??</a>
+                <a href="???">??</a>
+            </div>
+            '''
+            info = {
+                'forward_uid': '', 'forward_nickname': '', 'forward_daren': '',
+                'forward_verified': '', 'forward_vip': ''
+            }
+
+            info_a = node.children('a')
+            for a in info_a:
+                a = pq(a)
+                    
+                if a.attr('node-type') == 'feed_list_originNick':
+                    info['forward_uid']      = a.attr('usercard').split('id=')[-1]
+                    info['forward_nickname'] = a.attr('nick-name')
+                elif a.attr('href').startswith('http://club.weibo.com/'):
+                    info['forward_daren'] = a.children('i.W_ico16.ico_club').attr('title')
+                elif a.attr('href').startswith('http://verified.weibo.com/'):
+                    info['forward_verified'] = a.children('i.W_ico16.approve').attr('title')
+                elif a.attr('href').startswith('http://vip.weibo.com'):
+                    info['forward_vip'] = a.attr('title')
+            
+            return info
+            
+        def _parse_forward(node):
+            '''
+            <div node-type="feed_list_forwardContent" ??>
+                <div>
+                    <div class="WB_info">??</div>
+                    <div class="WB_text" node-type="feed_list_reason">??</div>
+                    <div node-type="feed_list_media_prev">??</div>
+                    <div class="WB_func clearfix">??</div>
+                </div>
+            </div>            
+            '''
+            forwards = {'forward_msg': '', 'forward_msgurl': '', 
+                        'forward_msg_id': '', 'forward_media': '', 
+                        'forward_msgtime': '', 'forward_msgfrom': '',
+                        'forward_n_likes': '0', 'forward_n_forwards': '0',
+                        'forward_n_favorites': '0', 'forward_n_comments': '0',
+                        'forward_map_data': ''}
+            
+            info = _parse_forward_info(node.find('div div.WB_info'))
+            msg  = _parse_msg(node.find('div div.WB_text'))
+            if msg is not None:
+                forwards['forward_msg']  = msg.strip().replace(',', u'，').replace(';', u'；')
+                forwards['forward_media']= _parse_media(node.find('div[node-type="feed_list_media_prev"]'))
+                forwards['forward_map_data']= _parse_map(node.find('div.map_data'))
+                forwards['forward_msgurl'], forwards['forward_msgtime'], \
+                    forwards['forward_msgfrom'] \
+                        = _parse_from(node.find('div div.WB_func div.WB_from'))
+                forwards['forward_n_likes'], forwards['forward_n_forwards'], \
+                    forwards['forward_n_favorites'], forwards['forward_n_comments'] \
+                        =_parse_handle(node.find('div div.WB_func div.WB_handle'))
+                forwards['forward_msg_id'] = _parse_msg_id(node.find('div div.WB_func div.WB_handle'))
+            else:
+                forwards['forward_msg'] = u'抱歉，此微博已被作者删除。'
+                
+            forwards.update(info)
+            
+            return forwards
+        
+        def _parse_weibo(i):
+            '''
+            <div class="WB_detail">??</div>
+            '''         
+            node = pq(this)  # @UndefinedVariable
+            
+            weibo = dict.fromkeys(settings.WEIBO_KEY, '')
+                        
+            #---msg
+            txt = _parse_msg(node.children('div[class="WB_text"][node-type="feed_list_content"]'))
+            
+            if txt is not None and (not txt.startswith(u'关注')):                
+                weibo['msg'] = txt.strip().replace(',', u'，').replace(';', u'；')
+                
+                #---media
+                weibo['media'] = _parse_media(node.children('ul[node-type="feed_list_media_prev"]'))
+                
+                #---msgurl, msgtime, msgfrom
+                weibo['msgurl'], weibo['msgtime'], weibo['msgfrom'] = \
+                    _parse_from(node.children('div.WB_func div.WB_from'))
+                
+                weibo['uid'] = weibo['msgurl'].split('http://weibo.com/')[-1].split('/')[0]
+                try:
+                    nickname = node.children('div.WB_func div.WB_handle a[action-type="feed_list_forward"]').attr('action-data')
+                    weibo['nickname'] = nickname.split('&name=')[-1].split('&uid=')[0].strip()
+                except:
+                    pass
+                
+                #---number of like, forward, favorite, comment
+                weibo['n_likes'], weibo['n_forwards'], \
+                    weibo['n_favorites'], weibo['n_comments'] = \
+                      _parse_handle(node.children('div.WB_func div.WB_handle'))
+                
+                #---mid
+                weibo['msg_id'] = _parse_msg_id(node.children('div.WB_func div.WB_handle'))
+                
+                #---map data
+                weibo['map_data'] = _parse_map(node.children('div.map_data'))
+                
+                #forward
+                forward_node = node.children('div[node-type="feed_list_forwardContent"]')
+                
+                if len(forward_node) > 0:
+                    weibo['is_forward'] = True
+                    forward = _parse_forward(forward_node)
+                    
+                    weibo.update(forward)
+                
+                #storage
+                self.storage.save_weibo(weibo)
+                
+        pq_doc.find('??').each(_parse_weibo)
+        
+        #--page count
+        cnt = 1
+        try:
+            pg = pq_doc.find('div#pagelist.pa form div input[name="mp"][type="hiden"]')
+            pg = int(pg.attr('value'))
+        except:
+            pass
+        
+        return cnt
+
+class CnFollowsParser(object):
+    def __init__(self, uid, storage):
+        self.uid = uid
+        self.storage = storage
+        
+    def parse(self, pq_doc):
+        def _parse_user(i):
+            pass
+        
+        
+        #--page count
+        cnt = 1
+        try:
+            pg = pq_doc.find('div#pagelist.pa form div input[name="mp"][type="hiden"]')
+            pg = int(pg.attr('value'))
+        except:
+            pass
+        
+        return cnt
+
+class CnFansParser(object):
+    def __init__(self, uid, storage):
+        self.uid = uid
+        self.storage = storage
+        
+    def parse(self, pq_doc):
+        def _parse_user(i):
+            pass
+        
+        
+        #--page count
+        cnt = 1
+        try:
+            pg = pq_doc.find('div#pagelist.pa form div input[name="mp"][type="hiden"]')
+            pg = int(pg.attr('value'))
+        except:
+            pass
+        
+        return cnt
+
+class CnInfoParser(object):
+    def __init__(self, uid, storage):
+        self.uid = uid
+        self.storage = storage
+        
+    def parse(self, pq_doc):
+        pass
