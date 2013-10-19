@@ -879,6 +879,8 @@ class CnWeiboFetcher(object):
          
         self.window = kwargs.get('window', None)
         
+        self.login_params = None
+        
     def gzip_data(self, data):
         if 0 == len(data) or data is None:
             return data
@@ -903,6 +905,12 @@ class CnWeiboFetcher(object):
                         page = resp.read()
                 return page
             except Exception, e:
+                if e.code == 404:
+                    msg = 'Error in urlopen_read: %s.' %str(e)
+                    write_message(msg, self.window)
+                
+                    return None
+                
                 if i < tries - 1:
                     sec = (i + 1) * 5
                     msg = ('Error in urlopen_read: %s\nTake a rest: %s seconds, and retry.'
@@ -916,10 +924,22 @@ class CnWeiboFetcher(object):
                     write_message(msg, self.window)
                      
                     return None
-     
+    
+    def get_domain(self, url):
+        domain = ''
+        
+        p = re.compile(r'http[s]?://([^/]+)/', re.U | re.M)
+        m = p.search(url)
+        
+        if (m and m.lastindex > 0):
+            domain = m.group(1)
+            
+        return domain
+    
     def get_headers(self, url, user_agent=''):
         headers = {}
-
+        headers['host'] = self.get_domain(url)
+        
         if user_agent:
             headers['User-Agent'] = user_agent
         else:
@@ -1002,20 +1022,22 @@ class CnWeiboFetcher(object):
         }
         
         url  = 'http://3g.sina.com.cn/prog/wapsite/sso/' + rand
-        self.headers = self.get_headers(url)
-        req  = self.pack_request(url, self.headers, postdata)
+        headers = self.get_headers(url)
+        req  = self.pack_request(url, headers, postdata)
         page = self.urlopen_read(req)
 
         link = HTML.fromstring(page).xpath("//a/@href")[0]
         if not link.startswith('http://'): 
             link = 'http://weibo.cn/%s' % link
         
-        req = urllib2.Request(link, headers=self.headers)
+        headers = self.get_headers(link)
+        req = self.pack_request(link, headers)
         self.urlopen_read(req)
+        
         link = urldecode(link)
         
         try:
-            urldecode(link['u'])
+            self.login_params = urldecode(link['u'])
             self.cj.save(self.cookie_file, True, True)
             
             msg = 'weibo.cn: login succeed.'
@@ -1023,6 +1045,9 @@ class CnWeiboFetcher(object):
             
             return True
         except KeyError:
+            msg = 'Login failed: it may caused by the wrong username/password.\nPlease check.'
+            logger.info(msg)
+            write_message(msg, self.window)
             return False
     
     def get_content_head(self, url, headers={}, data=None):
@@ -1064,27 +1089,33 @@ class CnWeiboFetcher(object):
     
     def valid_cookie(self, html=''):
         html = str(html)
-        login_ok = True
         
         if not html:
             url     = 'http://weibo.cn/kaifulee'
             headers = self.get_headers(url)
             html    = self.get_content_head(url, headers=headers)
-            
+        
         if not html:
+            msg = 'Error in cookie: need relogin.'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            self.clear_cookie(self.cookie_file)
+            
+            return False
+        
+        if u'登录' in html:
             if not self.login():
-                msg = 'need relogin.'
+                msg = 'In valid_cookie: relogin failed.'
                 logger.info(msg)
                 write_message(msg, self.window)
-         
-                self.clear_cookie(self.cookie_file)
-            
-                login_ok = False
-            else:
-                login_ok = True
                 
-        return login_ok
-    
+                self.clear_cookie(self.cookie_file)
+                
+                return False
+            else:
+                return True
+            
     def check_cookie(self, user=None, pwd=None, soft_path=None):
         if user is None or pwd is None:
             user = self.username
@@ -1121,11 +1152,18 @@ class CnWeiboFetcher(object):
         headers['Accept'] = '*/*'
         headers['Referer']= 'http://weibo.cn/'
         
-        req = self.pack_request(url, headers)
-        
         tries = 10
         for _ in range(tries):
             try:
+                if self.login_params is None:
+                    self.check_cookie()
+        
+                params = urldecode(url)
+                params.update(self.login_params)
+                url = '%s?%s' % (url.split('?', 1)[0], urllib.urlencode(params))
+        
+                req = self.pack_request(url, headers)
+                
                 self.n_connections += 1
                 
                 page = None
@@ -1142,8 +1180,9 @@ class CnWeiboFetcher(object):
                         write_message(msg, self.window)
                         
                         return None
-                    
-                return  not (u'用户不存在' in page or 'User does not exists' in page)
+                
+                return  not (u'用户不存在' in page or 'User does not exists' in page
+                             or u'抱歉，您当前访问的用户状态异常，暂时无法访问。' in page)
             except Exception, e:
                 msg = 'Error in check_user: exit Exception. %s' %str(e)
                 logger.info(msg)
@@ -1152,12 +1191,19 @@ class CnWeiboFetcher(object):
                 return None  
     
     def check_message(self, msg_url):
-        pass
+        raise NotImplementedError
     
     def fetch(self, url):
         headers = self.get_headers(url)
         headers['Accept'] = '*/*'
         headers['Referer']= 'http://weibo.cn'
+        
+        if self.login_params is None:
+            self.check_cookie()
+        
+        params = urldecode(url)
+        params.update(self.login_params)
+        url = '%s?%s' % (url.split('?', 1)[0], urllib.urlencode(params))
         
         req = self.pack_request(url, headers)
         page= self.urlopen_read(req)
