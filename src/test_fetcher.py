@@ -146,4 +146,8 @@ if __name__ == '__main__':
     user = 'ssh2222@qq.com'
     pwd  = '2222ssh'
     
-    TestCnWeiboFetcher(user, pwd)
+    print 'Test for weibo.cn fetcher...'
+#     TestCnWeiboFetcher(user, pwd)
+    
+    print 'Test for weibo.com fetcher...'
+    TestComWeiboFetcher(user, pwd)
