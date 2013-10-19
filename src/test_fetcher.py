@@ -143,11 +143,11 @@ def TestCnWeiboFetcher(user, pwd):
     print 'finished: # connections: %s, cost time: %s' %(fetcher.n_connections, cost_time)
 
 if __name__ == '__main__':
-    user = 'ssh2222@qq.com'
-    pwd  = '2222ssh'
-    
-    print 'Test for weibo.cn fetcher...'
-#     TestCnWeiboFetcher(user, pwd)
+    user = ''
+    pwd  = ''
     
     print 'Test for weibo.com fetcher...'
     TestComWeiboFetcher(user, pwd)
+    
+    print 'Test for weibo.cn fetcher...'
+    TestCnWeiboFetcher(user, pwd)
