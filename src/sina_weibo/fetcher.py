@@ -1113,8 +1113,14 @@ class CnWeiboFetcher(object):
                 self.clear_cookie(self.cookie_file)
                 
                 return False
-            else:
-                return True
+        
+        gsid = None
+        for c in self.cj:
+            if c.name.startswith('gsid') and c.domain == '.weibo.cn':
+                gsid = c.value
+        
+        self.login_params = {'gsid': gsid, 'vt': '4', 'lret': '1'}
+        return True
             
     def check_cookie(self, user=None, pwd=None, soft_path=None):
         if user is None or pwd is None:
@@ -1156,7 +1162,8 @@ class CnWeiboFetcher(object):
         for _ in range(tries):
             try:
                 if self.login_params is None:
-                    self.check_cookie()
+                    if not self.check_cookie():
+                        continue
         
                 params = urldecode(url)
                 params.update(self.login_params)
