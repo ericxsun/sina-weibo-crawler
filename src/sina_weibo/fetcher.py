@@ -523,15 +523,7 @@ class ComWeiboFetcher(object):
                 
                 return False
         
-        if 'refresh' in html and 'location.replace' in html:
-            msg = 'cookie failure. Please re-login'
-            logger.info(msg)
-            write_message(msg, self.window)
-
-            self.clear_cookie(self.cookie_file)
-            
-            return False
-        elif u'您的帐号存在异常' in html and u'解除限制' in html:
+        if u'您的帐号存在异常' in html and u'解除限制' in html:
             msg = u'账号被限制.'
             logger.info(msg)
             write_message(msg, self.window)
