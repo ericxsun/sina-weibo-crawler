@@ -74,7 +74,7 @@ WEIBO_KEY = [
 
 USER_KEY = [
     'uid', 'nickname', 'sex', 'addr', 'daren', 'verified', 'vip', 'n_follows', 
-    'n_fans', 'n_weibos', 'intro', 'follow_from'
+    'n_fans', 'n_weibos', 'intro', 'follow_from', 'fetch_time'
 ]
 
 INFO_KEY = [
