@@ -8,9 +8,10 @@ CNWEIBO  = 'weibo.cn'
 TWITTER  = 'twitter.com'
 FACEBOOK = 'facebook.com'
 
-SITE_CHOICES = [COMWEIBO, CNWEIBO, TWITTER, FACEBOOK]
-DATA_CHOICES = ['weibos', 'follows', 'fans', 'infos']
-MSG_CHOICES  = ['repost', 'comment']
+SITE_CHOICES     = [COMWEIBO, CNWEIBO, TWITTER, FACEBOOK]
+COM_DATA_CHOICES = ['weibos', 'follows', 'fans', 'infos']
+CN_DATA_CHOICES  = ['follows', 'fans']
+MSG_CHOICES      = ['repost', 'comment']
 
 HOME_PAGE = 'http://www.cns.edu.cn'
 
