@@ -4,49 +4,28 @@ CNWEIBO_COOKIE  = 'weibo.cn.cookie.dat'
 
 PAGE_LIMIT = 10
 
-QUERY_WEIBOS = (('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
-                 '"pl_content_weiboDetail"'), \
-                ('<script>FM.view({"ns":"pl.content.weiboDetail.index","domid":'
-                 '"Pl_Official_LeftWeiboDetail__28"'))
+QUERY_WEIBOS = (
+  ('<script>FM.view({"ns":"pl.content.weiboDetail.index","domid":"Pl_Official_LeftWeiboDetail__28"'), \
+  ('<script>FM.view({"ns":"pl.content.weiboDetail.index","domid":"Pl_Official_LeftProfileFeed__11"')
+)
 
 QUERY_WEIBOS_MID = ('div.WB_detail div[node-type="feed_list"]')
 
-QUERY_FOLLOWS = (('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
-                    '"pl_relation_hisFollow"'), \
-                 ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
-                  '"Pl_Official_LeftHisRelation__15"'), \
-                 ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
-                  '"Pl_Official_LeftHisRelation__21"'), \
-                 ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
-                  '"Pl_Official_LeftHisRelation__16"'))
+QUERY_FOLLOWS = (
+  ('<script>FM.view({"ns":"pl.content.followTab.index","domid":"Pl_Official_LeftHisRelation__15"'), \
+  ('<script>FM.view({"ns":"pl.content.followTab.index","domid":"Pl_Official_LeftHisRelation__21"'), \
+  ('<script>FM.view({"ns":"pl.content.followTab.index","domid":"Pl_Official_LeftHisRelation__16"'))
 
-QUERY_FANS    = (('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
-                    '"pl_relation_hisFans"'), \
-                 ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
-                  '"Pl_Official_LeftHisRelation__15"'), \
-                 ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
-                  '"Pl_Official_LeftHisRelation__21"'), \
-                 ('<script>FM.view({"ns":"pl.content.followTab.index","domid":'
-                  '"Pl_Official_LeftHisRelation__16"'))
+QUERY_FANS    = (
+  ('<script>FM.view({"ns":"pl.content.followTab.index","domid":"Pl_Official_LeftHisRelation__15"'), \
+  ('<script>FM.view({"ns":"pl.content.followTab.index","domid":"Pl_Official_LeftHisRelation__21"'), \
+  ('<script>FM.view({"ns":"pl.content.followTab.index","domid":"Pl_Official_LeftHisRelation__16"'))
 
-QUERY_INFO    = (('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
-                    '"pl_profile_photo"'), \
-                 ('<script>FM.view({"ns":"pl.header.head.index","domid":'
-                  '"Pl_Official_Header__1"'), \
-                 ('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
-                 '"pl_profile_infoBase"'),  \
-                 ('<script>FM.view({"ns":"","domid":"Pl_Official_LeftInfo__13"'), \
-                 ('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
-                  '"pl_profile_infoCareer"'),\
-                 ('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
-                  '"pl_profile_infoEdu"'),   \
-                 ('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
-                  '"pl_profile_infoTag"'),   \
-                 ('<script>STK && STK.pageletM && STK.pageletM.view({"pid":'
-                  '"pl_profile_infoGrow"'), \
-                 ('<script>FM.view({"ns":"","domid":"Pl_Official_RightGrow__14"'),\
-                 ('<script>FM.view({"ns":"","domid":"Pl_Official_LeftInfo__14"'), \
-                 ('<script>FM.view({"ns":"","domid":"Pl_Official_RightGrow__15"'))
+QUERY_INFO    = (
+  ('<script>FM.view({"ns":"pl.header.head.index","domid":"Pl_Official_Header__1"'), \
+  ('<script>FM.view({"ns":"","domid":"Pl_Official_LeftInfo__14"'), \
+  ('<script>FM.view({"ns":"","domid":"Pl_Official_RightGrow__15"')
+)
 
 MASK_WEIBO  = 0b100000
 MASK_FOLLOW = 0b010000
