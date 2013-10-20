@@ -52,8 +52,7 @@ class ComWeibosParser(object):
             '''
             try:
                 return node.text().split('-')[0].strip().replace(',', '-')
-            except AttributeError, e:
-                print e
+            except AttributeError:
                 return None
         
         def _parse_from(node):
@@ -94,13 +93,13 @@ class ComWeibosParser(object):
                         s = s.strip()
                          
                         if len(s.split('(')[0]) == 0:
-                            n_likes = s.split('(')[-1].strip(')')[0]
+                            n_likes = s.split('(')[-1].strip(')')
                         elif s.split('(')[0] == u'转发':
-                            n_forwards = s.split('(')[-1].strip(')')[0]
+                            n_forwards = s.split('(')[-1].strip(')')
                         elif s.split('(')[0] == u'收藏':
-                            n_favorites = s.split('(')[-1].strip(')')[0]
+                            n_favorites = s.split('(')[-1].strip(')')
                         elif s.split('(')[0] == u'评论':
-                            n_comments = s.split('(')[-1].strip(')')[0]       
+                            n_comments = s.split('(')[-1].strip(')')       
              
             return n_likes, n_forwards, n_favorites, n_comments
         
@@ -115,8 +114,7 @@ class ComWeibosParser(object):
             a = node.find('a[action-type="feed_list_like"]')
             try:
                 return a.attr('action-data').split('&mid=')[-1].split('&')[0]
-            except Exception, e:
-                print e
+            except:
                 return ''
             
         def _parse_forward_info(node):
@@ -210,8 +208,8 @@ class ComWeibosParser(object):
                 try:
                     nickname = node.children('div.WB_func div.WB_handle a[action-type="feed_list_forward"]').attr('action-data')
                     weibo['nickname'] = nickname.split('&name=')[-1].split('&uid=')[0].strip()
-                except Exception, e:
-                    print e
+                except:
+                    pass
                 
                 #---number of like, forward, favorite, comment
                 weibo['n_likes'], weibo['n_forwards'], \
@@ -227,6 +225,7 @@ class ComWeibosParser(object):
                 #forward
                 forward_node = node.children('div[node-type="feed_list_forwardContent"]')
                 
+                weibo['is_forward'] = False
                 if len(forward_node) > 0:
                     weibo['is_forward'] = True
                     forward = _parse_forward(forward_node)
@@ -244,8 +243,8 @@ class ComWeibosParser(object):
             pg = pq_doc.find('div.W_pages span.list a.W_moredown')
             pg_info = pg.attr('action-data').split('&')
             cnt = int(pg_info[1].split('countPage=')[-1])
-        except Exception, e:
-            print e
+        except:
+            pass
         
         return cnt
 
@@ -271,8 +270,8 @@ class ComFollowsParser(object):
                 try:
                     follow['uid'] = a.attr('usercard').split('=')[-1]
                     follow['nickname'] = a.text().strip()
-                except AttributeError, e:
-                    print e
+                except AttributeError:
+                    pass
                 
                 if a.attr('href').startswith('http://club.weibo.com/'):
                     follow['daren'] = a.children('i.W_ico16.ico_club').attr('title')
@@ -306,8 +305,8 @@ class ComFollowsParser(object):
             info = pq(node.children('div.info'))
             try:
                 follow['intro'] = info.text().strip().replace(',', u'，').replace(';', u'；')
-            except AttributeError, e:
-                print e
+            except AttributeError:
+                pass
             
             #---
             follow_from = pq(node.children('div.from a'))
@@ -326,8 +325,8 @@ class ComFollowsParser(object):
         try:
             pg  = pq_doc.find('div[node-type="pageList"] a.page')[-1]
             cnt = int(pq(pg).attr('href').split('&page=')[-1].split('#')[0])
-        except Exception, e:
-            print e
+        except:
+            pass
         
         return cnt
         
@@ -353,8 +352,8 @@ class ComFansParser(object):
                 try:
                     fan['uid'] = a.attr('usercard').split('id=')[-1]
                     fan['nickname'] = a.text().strip()
-                except AttributeError, e:
-                    print e
+                except AttributeError:
+                    pass
                 
                 if a.attr('href').startswith('http://club.weibo.com/'):
                     fan['daren'] = a.children('i.W_ico16.ico_club').attr('title')
@@ -389,8 +388,7 @@ class ComFansParser(object):
             info = pq(node.children('div.info'))
             try:
                 fan['intro'] = info.text().strip().replace(',', u'，').replace(';', u'；')
-            except AttributeError, e:
-                print e
+            except AttributeError:
                 fan['intro'] = ''
             
             #---
@@ -410,8 +408,8 @@ class ComFansParser(object):
         try:
             pg  = pq_doc.find('div[node-type="pageList"] a.page')[-1]
             cnt = int(pq(pg).attr('href').split('&page=')[-1].split('#')[0])
-        except Exception, e:
-            print e
+        except:
+            pass
            
         return cnt        
 
@@ -462,7 +460,8 @@ class ComInfosParser(object):
                     v = v.replace(',', u'，').replace(';', u'；')
                     profile[profile_map[k]['field']] = v
                 except AttributeError, e:
-                    print e
+                    msg = 'In ComInfosParser.parse: parse %s: %s' %(profile_map[k]['field'], str(e))
+                    print msg
 
         #---
         query = 'div.prm_app_pinfo div.info_block'
@@ -488,7 +487,8 @@ class ComInfosParser(object):
                     
                     profile['daren_interests'] = profile['daren_interests'].strip()
                 except Exception, e:
-                    print e
+                    msg = 'In ComInfosParser.parse: parse daren-%s' %str(e)
+                    print msg
             elif u'勋章信息' == pinfo_title:
                 bagdelist = infoblk.children('div.if_badge[node-type="medal"] ul.bagde_list li a')
                 for b in bagdelist:
@@ -508,7 +508,8 @@ class ComInfosParser(object):
                         elif u'距离下一级别' == t[0].strip():
                             profile['next_level_days'] = t[1].strip()
                     except Exception, e:
-                        print e
+                        msg = 'In ComInfosParser.parse: parse level-%s' %str(e)
+                        print msg
             elif u'信用信息' == pinfo_title:
                 trust = infoblk.children('div.if_trust div div.trust_info span.info')
                 for t in trust:
@@ -520,7 +521,8 @@ class ComInfosParser(object):
                         elif u'当前信用积分' == v[0].strip():
                             profile['trust_score'] = v[1].strip()
                     except Exception, e:
-                        print e
+                        msg = 'In ComInfosParser.parse: parse trust level-%s' %str(e)
+                        print msg
         #storage
         self.storage.save_info(profile)        
 
@@ -593,7 +595,7 @@ class ComRepostsParser(object):
                 t = node.children('div.info span.fl').text().split('|')[0]
                 info['msg_time'] = str(self.parse_datetime(t.strip()))[0:10]
             except Exception, e:
-                msg = 'Extract time error in ComRepostParser: %s' % str(e)
+                msg = 'In ComRepostsParser.parse: parse time-%s' %str(e)
                 print msg
                 info['msg_time'] = None
                 
@@ -688,7 +690,8 @@ class ComCommentsParser(object):
                     if a.attr('usercard').startswith('id=') and a.attr('href').startswith('/'):
                         info['nickname'] = a.attr('title')
                 except Exception, e:
-                    print e
+                    msg = 'In ComCommentsParser.parse: parse uid+nickname-%s' %str(e)
+                    print msg
                 
                 if a.attr('href').startswith('http://club.weibo.com/'):
                     info['daren'] = a.children('i.W_ico16.ico_club').attr('title')
@@ -766,7 +769,8 @@ class CnFollowsParser(object):
             pg = pq_doc.find('div#pagelist.pa form div input[name="mp"]')
             cnt= int(pg.attr('value'))
         except Exception, e:
-            print e
+            msg = 'In CnFollowsParser.parse: parse page count: %s' %str(e)
+            print msg
         
         return cnt
 
@@ -800,7 +804,8 @@ class CnFansParser(object):
             pg = pq_doc.find('div#pagelist.pa form div input[name="mp"]')
             cnt= int(pg.attr('value'))
         except Exception, e:
-            print e
+            msg = 'In CnFansParser.parse: parse page count: %s' %str(e)
+            print msg
         
         return cnt
 
