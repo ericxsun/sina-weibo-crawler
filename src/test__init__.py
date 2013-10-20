@@ -48,7 +48,7 @@ def TestWeibo__init__(user, pwd, weibo_com):
     print 'finished: # connections: %s, cost time: %s' %(fetcher.n_connections, cost_time)
 
 if __name__ == '__main__':
-    user = 'ssh2222@qq.com'
-    pwd  = '2222ssh'
+    user = ''
+    pwd  = ''
     
     TestWeibo__init__(user, pwd, weibo_com=True)
