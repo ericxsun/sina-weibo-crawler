@@ -25,24 +25,24 @@ def TestWeibo__init__(user, pwd, weibo_com):
     
     start = time.time()
     
-    if weibo_com:
-        print 'crawl weibos'
-        sina_weibo.main(fetcher, fetch_data='weibos', store_path='./file/', uids=uids)
-        
-        print 'crawl infos'
-        sina_weibo.main(fetcher, fetch_data='infos', store_path='./file/', uids=uids)
-        
-        print 'crawl reposts'
-        sina_weibo.main(fetcher, store_path='./file/', msg_urls=msg_urls, fetch_data='repost')
-        
-        print 'crawl comments'
-        sina_weibo.main(fetcher, store_path='./file/', msg_urls=msg_urls, fetch_data='comment')
+    
+    print 'crawl weibos'
+    sina_weibo.main(fetcher, fetch_data='weibos', store_path='./file/', uids=uids, weibo_com=weibo_com)
     
     print 'crawl follows'
-    sina_weibo.main(fetcher, fetch_data='follows', store_path='./file/', uids=uids)
+    sina_weibo.main(fetcher, fetch_data='follows', store_path='./file/', uids=uids, weibo_com=weibo_com)
     
     print 'crawl fans'
-    sina_weibo.main(fetcher, fetch_data='fans', store_path='./file/', uids=uids)
+    sina_weibo.main(fetcher, fetch_data='fans', store_path='./file/', uids=uids, weibo_com=weibo_com)
+    
+    print 'crawl infos'
+    sina_weibo.main(fetcher, fetch_data='infos', store_path='./file/', uids=uids, weibo_com=weibo_com)
+        
+    print 'crawl reposts'
+    sina_weibo.main(fetcher, store_path='./file/', msg_urls=msg_urls, fetch_data='repost', weibo_com=weibo_com)
+        
+    print 'crawl comments'
+    sina_weibo.main(fetcher, store_path='./file/', msg_urls=msg_urls, fetch_data='comment', weibo_com=weibo_com)
     
     cost_time = int(time.time() - start)
     print 'finished: # connections: %s, cost time: %s' %(fetcher.n_connections, cost_time)
@@ -52,3 +52,5 @@ if __name__ == '__main__':
     pwd  = ''
     
     TestWeibo__init__(user, pwd, weibo_com=True)
+    
+    TestWeibo__init__(user, pwd, weibo_com=False)

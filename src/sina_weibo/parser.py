@@ -459,9 +459,8 @@ class ComInfosParser(object):
                 try:
                     v = v.replace(',', u'，').replace(';', u'；')
                     profile[profile_map[k]['field']] = v
-                except AttributeError, e:
-                    msg = 'In ComInfosParser.parse: parse %s: %s' %(profile_map[k]['field'], str(e))
-                    print msg
+                except:
+                    pass
 
         #---
         query = 'div.prm_app_pinfo div.info_block'
@@ -486,9 +485,8 @@ class ComInfosParser(object):
                             profile['daren_interests'] += '-' + a.text().strip()
                     
                     profile['daren_interests'] = profile['daren_interests'].strip()
-                except Exception, e:
-                    msg = 'In ComInfosParser.parse: parse daren-%s' %str(e)
-                    print msg
+                except:
+                    pass
             elif u'勋章信息' == pinfo_title:
                 bagdelist = infoblk.children('div.if_badge[node-type="medal"] ul.bagde_list li a')
                 for b in bagdelist:
@@ -507,9 +505,8 @@ class ComInfosParser(object):
                             profile['active_days'] = t[1].strip()
                         elif u'距离下一级别' == t[0].strip():
                             profile['next_level_days'] = t[1].strip()
-                    except Exception, e:
-                        msg = 'In ComInfosParser.parse: parse level-%s' %str(e)
-                        print msg
+                    except:
+                        pass
             elif u'信用信息' == pinfo_title:
                 trust = infoblk.children('div.if_trust div div.trust_info span.info')
                 for t in trust:
@@ -520,9 +517,8 @@ class ComInfosParser(object):
                             profile['trust_level'] = v[1].strip()
                         elif u'当前信用积分' == v[0].strip():
                             profile['trust_score'] = v[1].strip()
-                    except Exception, e:
-                        msg = 'In ComInfosParser.parse: parse trust level-%s' %str(e)
-                        print msg
+                    except:
+                        pass
         #storage
         self.storage.save_info(profile)        
 
@@ -594,9 +590,7 @@ class ComRepostsParser(object):
             try:
                 t = node.children('div.info span.fl').text().split('|')[0]
                 info['msg_time'] = str(self.parse_datetime(t.strip()))[0:10]
-            except Exception, e:
-                msg = 'In ComRepostsParser.parse: parse time-%s' %str(e)
-                print msg
+            except:
                 info['msg_time'] = None
                 
             #--contents
@@ -689,9 +683,8 @@ class ComCommentsParser(object):
                 try:
                     if a.attr('usercard').startswith('id=') and a.attr('href').startswith('/'):
                         info['nickname'] = a.attr('title')
-                except Exception, e:
-                    msg = 'In ComCommentsParser.parse: parse uid+nickname-%s' %str(e)
-                    print msg
+                except:
+                    pass
                 
                 if a.attr('href').startswith('http://club.weibo.com/'):
                     info['daren'] = a.children('i.W_ico16.ico_club').attr('title')
@@ -769,9 +762,8 @@ class CnFollowsParser(object):
         try:
             pg = pq_doc.find('div#pagelist.pa form div input[name="mp"]')
             cnt= int(pg.attr('value'))
-        except Exception, e:
-            msg = 'In CnFollowsParser.parse: parse page count: %s' %str(e)
-            print msg
+        except:
+            pass
         
         return cnt
 
@@ -803,9 +795,8 @@ class CnFansParser(object):
         try:
             pg = pq_doc.find('div#pagelist.pa form div input[name="mp"]')
             cnt= int(pg.attr('value'))
-        except Exception, e:
-            msg = 'In CnFansParser.parse: parse page count: %s' %str(e)
-            print msg
+        except:
+            pass
         
         return cnt
 
