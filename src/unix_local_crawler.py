@@ -494,9 +494,6 @@ class Frame(wx.Frame):
         
         self.start_btn.Enable(True)
         
-        self.multi_user_id_txt.SetValue('')
-        self.msg_url_txt.SetValue('')
-    
     def on_clear_logs(self, event):
         self.logs_txt.SetValue('')
     
