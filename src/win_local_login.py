@@ -114,21 +114,27 @@ class Frame(wx.Frame):
             wx.MessageBox(message='Account/Password cannot be blank. Please retry!',
                           caption='Warning', style=wx.OK|wx.ICON_INFORMATION)
         else:
-            if website == settings.COMWEIBO:         
-                fetcher = ComWeiboFetcher(username=account, password=password, 
-                                          window=self)
+            if website in [settings.COMWEIBO, settings.CNWEIBO]:
+                if website == settings.COMWEIBO:
+                    fetcher = ComWeiboFetcher(username=account, 
+                                              password=password, 
+                                              window=self)
+                elif website == settings.CNWEIBO:
+                    fetcher = CnWeiboFetcher(username=account,
+                                             password=password,
+                                             window=self)
+                else:
+                    return
+                
                 if fetcher.check_cookie():
                     fetcher.window = None
                     
                     self.Destroy()
                     wx.GetApp().ExitMainLoop()
                     
-                    import win_local_crawler as wlc
+                    import unix_local_crawler as wlc
                     wlc.main(account_display=account, website_display=website,
                              fetcher=fetcher)
-            elif website == settings.CNWEIBO:
-                wx.MessageBox(message='For weibo.cn: not implemented. Please retry!',
-                              caption='Error', style=wx.OK|wx.ICON_INFORMATION)
             elif website == settings.TWITTER:
                 wx.MessageBox(message='For Twitter: not implemented. Please retry!',
                               caption='Error', style=wx.OK|wx.ICON_INFORMATION)

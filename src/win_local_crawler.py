@@ -22,9 +22,6 @@ HOME_PAGE  = settings.HOME_PAGE
 LICENCE    = settings.LICENCE
 VERSION    = settings.LOCAL_VERSION
 
-DATA_CHOICES = settings.DATA_CHOICES
-MSG_CHOICES  = settings.MSG_CHOICES
-
 class StartCrawl(threading.Thread):
     def __init__(self, website, fetcher, fetch_data, ids, ids_type, 
                  store_path, window):
@@ -46,13 +43,17 @@ class StartCrawl(threading.Thread):
             if self.ids_type == 'uid':
                 sina_weibo.main(fetcher=self.fetcher, uids=self.ids, 
                                 fetch_data=self.fetch_data, 
-                                store_path=self.store_path, window=self.window)
+                                store_path=self.store_path, 
+                                window=self.window, weibo_com=True)
             elif self.ids_type == 'msg_url':
                 sina_weibo.main(fetcher=self.fetcher, msg_urls=self.ids,
-                                store_path=self.store_path, window=self.window)
+                                fetch_data=self.fetch_data,
+                                store_path=self.store_path, 
+                                window=self.window, weibo_com=True)
         elif self.website == settings.CNWEIBO:
-            msg = 'For weib.cn, not implemented in current version.'
-            self.window.write_logs(msg)
+            sina_weibo.main(fetcher=self.fetcher, uids=self.ids,
+                            fetch_data=self.fetch_data,
+                            window=self.window, weibo_com=False)
         elif self.website == settings.TWITTER:
             msg = 'For twitter, not implemented in current version.'
             self.window.write_logs(msg)
@@ -180,6 +181,9 @@ class Frame(wx.Frame):
                           style=wx.DEFAULT_FRAME_STYLE^(wx.RESIZE_BORDER|
                                                         wx.RESIZE_BOX))
         
+        self.DATA_CHOICES = settings.COM_DATA_CHOICES
+        self.MSG_CHOICES  = settings.MSG_CHOICES
+
         self.panel  = wx.Panel(self)
         self.tskbar = TaskbarIco(self)
         
@@ -268,11 +272,13 @@ class Frame(wx.Frame):
         
         #Fetch Data Type
         #weibo, follow, fan, info
+        if self.website_display == settings.CNWEIBO:
+            self.DATA_CHOICES = settings.CN_DATA_CHOICES
         self.fetch_data_type= wx.RadioBox(parent=self.panel, id=-1, label='Fetch Data Type',
                                           pos=(390, 72), size=(150, 98),
                                           majorDimension=2,
                                           style=wx.RA_SPECIFY_COLS,
-                                          choices=DATA_CHOICES)
+                                          choices=self.DATA_CHOICES)
         self.fetch_data_type.SetSelection(0)
         
         #msg-repost or comment
@@ -280,7 +286,7 @@ class Frame(wx.Frame):
                                               pos=(390, 72), size=(150, 98),
                                               majorDimension=2,
                                               style=wx.RA_SPECIFY_COLS,
-                                              choices=MSG_CHOICES)
+                                              choices=self.MSG_CHOICES)
         self.fetch_data_type_msg.SetSelection(0)
         self.fetch_data_type_msg.Show(False)
         
@@ -407,7 +413,7 @@ class Frame(wx.Frame):
         id_type = 'uid'
         
         if not self.msg_url_btn.IsEnabled():
-            fetch_data = MSG_CHOICES[self.fetch_data_type_msg.GetSelection()]
+            fetch_data = self.MSG_CHOICES[self.fetch_data_type_msg.GetSelection()]
             
             id_type = 'msg_url'
             _ids = self.msg_url_txt.Value.split(';')
@@ -432,7 +438,7 @@ class Frame(wx.Frame):
             
             self.fetch_data_type_msg.Enable(False)
         else:
-            fetch_data = DATA_CHOICES[self.fetch_data_type.GetSelection()]
+            fetch_data = self.DATA_CHOICES[self.fetch_data_type.GetSelection()]
             
             if not self.single_user_id_btn.IsEnabled():
                 wx.MessageBox(message='Selected user in search result. At present, not implemented.')
