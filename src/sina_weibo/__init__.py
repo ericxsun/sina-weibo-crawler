@@ -4,12 +4,13 @@ from __future__ import division
 from common import STORE_PATH, write_message, logger, update_progress_bar, \
                     format_delta_time
 from crawler import ComWeiboCrawler
+from sina_weibo.crawler import CnWeiboCrawler
 from storage import FileStorage
-import settings
-import time
-import random
 import codecs
 import os
+import random
+import settings
+import time
 
 def adjust_delay(dt):
     '''
@@ -35,6 +36,7 @@ def main(fetcher, **kwargs):
     msg_urls   = kwargs.get('msg_urls', None)
     store_path = kwargs.get('store_path', STORE_PATH)
     window     = kwargs.get('window', None)
+    weibo_com  = kwargs.get('weibo_com', True)
     
     fetcher.window = window
     
@@ -50,161 +52,225 @@ def main(fetcher, **kwargs):
     
     start_time = time.time()
     
-    if uids is not None:
-        fetch_data = fetch_data.lower()
-        n_ids      = len(uids)
-        
-        write_message(('=======Need to crawl: uids-%d======='  %n_ids), window)
-        
-        i     = 0
-        dt_id = 0
-        
-        for uid in uids:
-            fetcher.n_connections = 0
+    if weibo_com:
+        if uids is not None:
+            fetch_data = fetch_data.lower()
+            n_ids      = len(uids)
             
-            if dt_id > 0:
-                delay = adjust_delay(dt_id)
-                msg  = '-------\n'
-                msg += 'Take a rest: %d seconds, and start new crawler..' %delay
-                msg += '\n-------'
+            write_message(('=======Need to crawl: uids-%d======='  %n_ids), window)
+            
+            i     = 0
+            dt_id = 0
+            
+            for uid in uids:
+                fetcher.n_connections = 0
                 
-                write_message(msg, window)
-                time.sleep(delay)
-            
-            t_id_s = time.time()
-            
-            if fetch_data == 'weibos':
-                crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
+                if dt_id > 0:
+                    delay = adjust_delay(dt_id)
+                    msg  = '-------\n'
+                    msg += 'Take a rest: %d seconds, and start new crawler..' %delay
+                    msg += '\n-------'
                 
-                res = crawler.crawl_weibos()
-                if res is None:
-                    n_errors += 1
-                    error_fp.write(str(uid) + '\n')
-                elif res is False:
-                    not_exist_fp.write(str(uid) + '\n')
-                elif res is True:
-                    succeed_fp.write(str(uid) + '\n')
+                    write_message(msg, window)
+                    time.sleep(delay)
+            
+                t_id_s = time.time()
+                
+                if fetch_data == 'weibos':
+                    crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
+                
+                    res = crawler.crawl_weibos()
+                    if res is None:
+                        n_errors += 1
+                        error_fp.write(str(uid) + '\n')
+                    elif res is False:
+                        not_exist_fp.write(str(uid) + '\n')
+                    elif res is True:
+                        succeed_fp.write(str(uid) + '\n')
+                elif fetch_data == 'follows':
+                    crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
                     
-            elif fetch_data == 'follows':
-                crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
-                
-                res = crawler.crawl_follows()
-                if res is None:
-                    n_errors += 1
-                    error_fp.write(str(uid) + ';')
-                elif res is False:
-                    not_exist_fp.write(str(uid) + ';')
-                elif res is True:
-                    succeed_fp.write(str(uid) + ';')
+                    res = crawler.crawl_follows()
+                    if res is None:
+                        n_errors += 1
+                        error_fp.write(str(uid) + ';')
+                    elif res is False:
+                        not_exist_fp.write(str(uid) + ';')
+                    elif res is True:
+                        succeed_fp.write(str(uid) + ';')
+                elif fetch_data == 'fans':
+                    crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
                     
-            elif fetch_data == 'fans':
-                crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
+                    res = crawler.crawl_fans()
+                    if res is None:
+                        n_errors += 1
+                        error_fp.write(str(uid) + ';')
+                    elif res is False:
+                        not_exist_fp.write(str(uid) + ';')
+                    elif res is True:
+                        succeed_fp.write(str(uid) + ';')
+                elif fetch_data == 'infos':
+                    crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
+                    
+                    res = crawler.crawl_infos()
+                    if res is None:
+                        n_errors += 1
+                        error_fp.write(str(uid) + ';')
+                    elif res is False:
+                        not_exist_fp.write(str(uid) + ';')
+                    elif res is True:
+                        succeed_fp.write(str(uid) + ';')
                 
-                res = crawler.crawl_fans()
-                if res is None:
-                    n_errors += 1
-                    error_fp.write(str(uid) + ';')
-                elif res is False:
-                    not_exist_fp.write(str(uid) + ';')
-                elif res is True:
-                    succeed_fp.write(str(uid) + ';')
+                #--
+                t_id_e = time.time()
+                dt_id  = int(t_id_e - t_id_s)
                 
-            elif fetch_data == 'infos':
-                crawler = ComWeiboCrawler(fetcher, store_path, uid=uid, window=window)
+                i += 1
                 
-                res = crawler.crawl_infos()
-                if res is None:
-                    n_errors += 1
-                    error_fp.write(str(uid) + ';')
-                elif res is False:
-                    not_exist_fp.write(str(uid) + ';')
-                elif res is True:
-                    succeed_fp.write(str(uid) + ';')
-            
-            t_id_e = time.time()
-            dt_id  = int(t_id_e - t_id_s)
-            
-            i += 1
-            
-            update_progress_bar(window, i*100/n_ids)
-            
-            n_connections += fetcher.n_connections   
-            
-    elif msg_urls is not None:
-        n_ids = len(msg_urls)
-        
-        write_message(('=======Need to crawl: messages-%d======='  %n_ids), window)
-        
-        i     = 0
-        dt_id = 0
-        
-        for msg_url in msg_urls:
-            fetcher.n_connections = 0
-            
-            if not msg_url.startswith('http://weibo.com/'):
-                msg_url = 'http://weibo.com/' + msg_url.replace('/', '')
-            
-            if dt_id > 0:
-                delay = adjust_delay(dt_id)
-                msg  = '-------\n'
-                msg += 'Take a rest: %d seconds, and start new crawler..' %delay
-                msg += '\n-------'
+                update_progress_bar(window, i*100/n_ids)
                 
-                write_message(msg, window)
-                time.sleep(delay)
+                n_connections += fetcher.n_connections
             
-            t_id_s = time.time()
+            #--end for uid in uids  
+                    
+        elif msg_urls is not None:
+            n_ids = len(msg_urls)
             
-            #repost
-            if fetch_data == 'repost':
-                crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
+            write_message(('=======Need to crawl: messages-%d======='  %n_ids), window)
+            
+            i     = 0
+            dt_id = 0
+            
+            for msg_url in msg_urls:
+                fetcher.n_connections = 0
                 
-                res = crawler.crawl_msg_reposts()
-                if res is None:
-                    n_errors += 1
-                    error_fp.write(str(msg_url) + ';')
-                elif res is False:
-                    not_exist_fp.write(str(msg_url) + ';')
-                elif res is True:
-                    succeed_fp.write(str(msg_url) + ';')
-            
-            #comment    
-            elif fetch_data == 'comment':           
-                crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
+                if not msg_url.startswith('http://weibo.com/'):
+                    msg_url = 'http://weibo.com/' + msg_url.replace('/', '')
                 
-                res = crawler.crawl_msg_comments()
-                if res is None:
-                    n_errors += 1
-                    error_fp.write(str(msg_url) + ';')
-                elif res is False:
-                    not_exist_fp.write(str(msg_url) + ';')
-                elif res is True:
-                    succeed_fp.write(str(msg_url) + ';')
+                if dt_id > 0:
+                    delay = adjust_delay(dt_id)
+                    msg  = '-------\n'
+                    msg += 'Take a rest: %d seconds, and start new crawler..' %delay
+                    msg += '\n-------'
+                    
+                    write_message(msg, window)
+                    time.sleep(delay)
                 
-            t_id_e = time.time()
-            dt_id  = int(t_id_e - t_id_s)
+                t_id_s = time.time()
+                
+                #repost
+                if fetch_data == 'repost':
+                    crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
+                    
+                    res = crawler.crawl_msg_reposts()
+                    if res is None:
+                        n_errors += 1
+                        error_fp.write(str(msg_url) + ';')
+                    elif res is False:
+                        not_exist_fp.write(str(msg_url) + ';')
+                    elif res is True:
+                        succeed_fp.write(str(msg_url) + ';')
+                
+                #comment    
+                elif fetch_data == 'comment':           
+                    crawler = ComWeiboCrawler(fetcher, store_path, msg_url=msg_url, window=window)
+                    
+                    res = crawler.crawl_msg_comments()
+                    if res is None:
+                        n_errors += 1
+                        error_fp.write(str(msg_url) + ';')
+                    elif res is False:
+                        not_exist_fp.write(str(msg_url) + ';')
+                    elif res is True:
+                        succeed_fp.write(str(msg_url) + ';')
+                
+                #--
+                t_id_e = time.time()
+                dt_id  = int(t_id_e - t_id_s)
+                
+                i += 1
+                
+                update_progress_bar(window, i*100/n_ids)
+                
+                n_connections += fetcher.n_connections
             
-            i += 1
-            
-            update_progress_bar(window, i*100/n_ids)
-            
-            n_connections += fetcher.n_connections
+            #--end for msg_url in msg_urls
     
+    else:   #weibo.cn
+        if uids is not None:
+            fetch_data = fetch_data.lower()
+            n_ids      = len(uids)
+            
+            write_message(('=======Need to crawl: uids-%d======='  %n_ids), window)
+            
+            i     = 0
+            dt_id = 0
+            
+            for uid in uids:
+                fetcher.n_connections = 0
+                
+                if dt_id > 0:
+                    delay = adjust_delay(dt_id)
+                    msg  = '-------\n'
+                    msg += 'Take a rest: %d seconds, and start new crawler..' %delay
+                    msg += '\n-------'
+                
+                    write_message(msg, window)
+                    time.sleep(delay)
+            
+                t_id_s = time.time()
+                
+                if fetch_data == 'follows':
+                    crawler = CnWeiboCrawler(fetcher, store_path, uid=uid, window=window)
+                    
+                    res = crawler.crawl_follows()
+                    if res is None:
+                        n_errors += 1
+                        error_fp.write(str(uid) + ';')
+                    elif res is False:
+                        not_exist_fp.write(str(uid) + ';')
+                    elif res is True:
+                        succeed_fp.write(str(uid) + ';')
+                elif fetch_data == 'fans':
+                    crawler = CnWeiboCrawler(fetcher, store_path, uid=uid, window=window)
+                    
+                    res = crawler.crawl_fans()
+                    if res is None:
+                        n_errors += 1
+                        error_fp.write(str(uid) + ';')
+                    elif res is False:
+                        not_exist_fp.write(str(uid) + ';')
+                    elif res is True:
+                        succeed_fp.write(str(uid) + ';')
+                
+                #--
+                t_id_e = time.time()
+                dt_id  = int(t_id_e - t_id_s)
+                
+                i += 1
+                
+                update_progress_bar(window, i*100/n_ids)
+                
+                n_connections += fetcher.n_connections
+            
+            #--end for uid in uids
+        #--
     succeed_fp.close()
     error_fp.close()
     not_exist_fp.close()    
     
     cost_time = int(time.time() - start_time)
-    
+        
     d, h, m, s = format_delta_time(cost_time)
     msg  = 'The task has successfully finished.\n'
     msg += 'Crawled [user|message]ids: %d, cost time: %d(d)-%d(h)-%d(m)-%d(s), connections: %d' %(n_ids, d, h, m, s, n_connections)
     
-    accuracy = 1 - n_errors / n_ids
+    accuracy = 1 - n_errors / n_ids if n_ids > 0 else 0
     msg += '\nAccuracy:%d%%' %(accuracy*100)
-    
+        
     write_message('=======', window)
     logger.info(msg)
     write_message(msg, window)
-    
+        
     return accuracy
+    
