@@ -167,7 +167,7 @@ def TestCnWeiboParser():
 if __name__ == '__main__':
     
     print 'Test for weibo.com parser...'
-#     TestComWeiboParser()
+    TestComWeiboParser()
     
     print 'Test for weibo.cn parser...'
     TestCnWeiboParser()

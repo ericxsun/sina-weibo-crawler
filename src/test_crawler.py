@@ -107,11 +107,11 @@ def TestCnWeiboCrawler(user, pwd):
     print 'finished: # connections: %s, cost time: %s' %(fetcher.n_connections, cost_time)
     
 if __name__ == '__main__':
-    user = 'ssh2222@qq.com'
-    pwd  = '2222ssh'
+    user = ''
+    pwd  = ''
     
     print 'Test for weibo.com crawler...'
-#     TestComWeiboCrawler(user, pwd)
+    TestComWeiboCrawler(user, pwd)
     
     print 'Test for weibo.cn crawler...'
     TestCnWeiboCrawler(user, pwd)
