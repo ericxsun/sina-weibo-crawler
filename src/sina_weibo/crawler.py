@@ -33,6 +33,12 @@ class ComWeiboCrawler(object):
     def _fetch(self, url, query):
         html = self.fetcher.fetch(url, query)
         
+        if len(html) == 0:
+            msg = u'weibo改版了,信息标签发生变化'
+            logger.info(msg)
+            write_message(msg, self.window)
+            return None
+        
         page_right = self._check_page_right(html)
         
         if page_right:
@@ -59,6 +65,12 @@ class ComWeiboCrawler(object):
     
     def _fetch_msg_repost(self, msg_id, page=1):
         html, num_pages = self.fetcher.fetch_msg_reposts(msg_id, page)
+        
+        if len(html) == 0:
+            msg = u'weibo改版了,信息标签发生变化'
+            logger.info(msg)
+            write_message(msg, self.window)
+            return None
         
         page_right = self._check_page_right(html)
         
@@ -87,6 +99,12 @@ class ComWeiboCrawler(object):
     def _fetch_msg_comment(self, msg_id, page=1):
         html, num_pages = self.fetcher.fetch_msg_comments(msg_id, page)
         
+        if len(html) == 0:
+            msg = u'weibo改版了,信息标签发生变化'
+            logger.info(msg)
+            write_message(msg, self.window)
+            return None
+        
         page_right = self._check_page_right(html)
         
         if page_right:
@@ -113,6 +131,12 @@ class ComWeiboCrawler(object):
                 
     def _fetch_weibo(self, uid, page):
         html = self.fetcher.fetch_weibo(uid, page)
+        
+        if len(html) == 0:
+            msg = u'weibo改版了,信息标签发生变化'
+            logger.info(msg)
+            write_message(msg, self.window)
+            return None
         
         page_right = self._check_page_right(html)
         

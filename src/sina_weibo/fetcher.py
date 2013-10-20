@@ -715,6 +715,7 @@ class ComWeiboFetcher(object):
                     return json.loads(page)['data']
                 else:
                     msg = json.loads(page)['msg']
+                    logger.info(msg)
                     write_message(msg, self.window)
                     return None
             except ValueError:
@@ -735,6 +736,7 @@ class ComWeiboFetcher(object):
                     return json.loads(page)['data']
                 else:
                     msg = json.loads(page)['msg']
+                    logger.info(msg)
                     write_message(msg, self.window)
                     return None
             except ValueError:
@@ -755,6 +757,7 @@ class ComWeiboFetcher(object):
                     return json.loads(page)['data']
                 else:
                     msg = json.loads(page)['msg']
+                    logger.info(msg)
                     write_message(msg, self.window)
                     return None
             except ValueError:
