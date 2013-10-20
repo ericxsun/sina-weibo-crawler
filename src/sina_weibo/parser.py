@@ -739,8 +739,7 @@ class CnWeibosParser(object):
         raise ValueError('Please use ComWeiboParser')
 
 class CnFollowsParser(object):
-    def __init__(self, uid, storage):
-        self.uid = uid
+    def __init__(self, storage):
         self.storage = storage
         
     def parse(self, pq_doc):
@@ -756,7 +755,9 @@ class CnFollowsParser(object):
             links = node.children('a')
             
             follow['nickname'] = pq(links[0]).text()
-            follow['uid'] = pq(links[-1]).attr('href').split('?')[-1].split('&')[0].split('uid=')[-1]
+            
+            if len(links) > 1:
+                follow['uid'] = pq(links[-1]).attr('href').split('?')[-1].split('&')[0].split('uid=')[-1]
 
             self.storage.save_follow(follow)
             
@@ -775,8 +776,7 @@ class CnFollowsParser(object):
         return cnt
 
 class CnFansParser(object):
-    def __init__(self, uid, storage):
-        self.uid = uid
+    def __init__(self, storage):
         self.storage = storage
         
     def parse(self, pq_doc):

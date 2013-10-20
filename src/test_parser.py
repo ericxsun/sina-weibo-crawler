@@ -134,7 +134,7 @@ def TestCnWeiboParser():
     print 'test for ComFollowsParser...'
     storage = FileStorage(uid, settings.MASK_FOLLOW, './file/')
     html    = codecs.open(f_follows, 'r', 'utf-8').read()
-    parser  = CnFollowsParser(uid, storage)
+    parser  = CnFollowsParser(storage)
     try:
         pq_doc = pq(html.encode('utf-8'))
         print 'page count: %d' %(parser.parse(pq_doc))
@@ -145,7 +145,7 @@ def TestCnWeiboParser():
     print 'test for ComFansParser...'
     storage = FileStorage(uid, settings.MASK_FAN, './file/')
     html    = codecs.open(f_fans, 'r', 'utf-8').read()
-    parser  = CnFansParser(uid, storage)
+    parser  = CnFansParser(storage)
     try:
         pq_doc = pq(html.encode('utf-8'))
         print 'page count: %d' %(parser.parse(pq_doc))

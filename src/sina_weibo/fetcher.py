@@ -711,7 +711,12 @@ class ComWeiboFetcher(object):
             page= self.urlopen_read(req)
                         
             try:
-                return json.loads(page)['data']
+                if json.loads(page)['code'] == "100000":
+                    return json.loads(page)['data']
+                else:
+                    msg = json.loads(page)['msg']
+                    write_message(msg, self.window)
+                    return None
             except ValueError:
                 return page
         
@@ -726,7 +731,12 @@ class ComWeiboFetcher(object):
             page= self.urlopen_read(req)
             
             try:
-                return json.loads(page)['data']
+                if json.loads(page)['code'] == "100000":
+                    return json.loads(page)['data']
+                else:
+                    msg = json.loads(page)['msg']
+                    write_message(msg, self.window)
+                    return None
             except ValueError:
                 return page
             
@@ -741,7 +751,12 @@ class ComWeiboFetcher(object):
             page= self.urlopen_read(req)
             
             try:
-                return json.loads(page)['data']
+                if json.loads(page)['code'] == '100000':
+                    return json.loads(page)['data']
+                else:
+                    msg = json.loads(page)['msg']
+                    write_message(msg, self.window)
+                    return None
             except ValueError:
                 return page
         
@@ -756,25 +771,29 @@ class ComWeiboFetcher(object):
             '__rnd'   : '',     #访问此页的时间，以秒表示的13位整数
             '_k'      : int(time.time() * (10**6)),     #本次登录第一次访问此微博的时间，16位整数
             '_t'      : 0,      #
-            'count'   : 50,   #第一次访问为50,第二次及以后，为15
+            'count'   : 50,     #第一次访问为50,第二次及以后，为15
             'end_id'  : '',     #最新的这一项微博的mid
             'max_id'  : '',     #已经访问的， 
             'page'    : page,   #要访问的页码
             'pagebar' : '',     #第二次是0，第三次是1，第一次没有这项
-            'pre_page': 0,    #第二次和第三次都是本页页码，第一次访问是上页页码
+            'pre_page': 0,      #第二次和第三次都是本页页码，第一次访问是上页页码
             'uid'     : uid
         }
                 
         feed_list = ''       
         
-        feed_list += _get_first_part(headers,  body, url)
+        try:
+            feed_list += _get_first_part(headers,  body, url)
         
-        time.sleep(1)
-        feed_list += _get_second_part(headers, body, url)
+            time.sleep(1)
+            feed_list += _get_second_part(headers, body, url)
         
-        time.sleep(1)
-        feed_list += _get_third_part(headers,  body, url)
-              
+            time.sleep(1)
+            feed_list += _get_third_part(headers,  body, url)
+        except Exception, e:
+            print e
+            feed_list = None
+            
         return feed_list
     
     def fetch(self, url, query):
