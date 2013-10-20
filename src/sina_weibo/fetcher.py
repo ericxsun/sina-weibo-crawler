@@ -607,7 +607,7 @@ class ComWeiboFetcher(object):
                     
         return doc
     
-    def check_user(self, uid):        
+    def check_user(self, uid):
         url = 'http://weibo.com/u/%s' %(uid)
         
         headers = self.get_headers(url)
@@ -629,6 +629,15 @@ class ComWeiboFetcher(object):
                         page = resp.read()
                 
                 is_exist = not (u'错误提示 新浪微博' in page) 
+                
+                if ("$CONFIG['allowConnect'] = 'false'" in page 
+                    or "$CONFIG['allowConnect']='false'" in page):
+                    msg = u'访问频繁，被新浪暂封了.'
+                    logger.info(msg)
+                    write_message(msg, self.window)
+            
+                    return None
+                
                 is_exist = is_exist and ("$CONFIG['oid']='%s'" %uid in page 
                                         or "$CONFIG['oid'] = '%s'" %uid in page
                                         or u'赶快注册微博粉我吧' in page)
@@ -794,7 +803,10 @@ class ComWeiboFetcher(object):
             time.sleep(1)
             feed_list += _get_third_part(headers,  body, url)
         except Exception, e:
-            print e
+            msg = str(e)
+            logger.info(msg)
+            write_message(msg, self.window)
+            
             feed_list = None
             
         return feed_list
@@ -806,6 +818,14 @@ class ComWeiboFetcher(object):
         
         req = self.pack_request(url, headers)
         page= self.urlopen_read(req)
+        
+        if "$CONFIG['allowConnect'] = 'false'" in page or "$CONFIG['allowConnect']='false'" in page:
+            msg = u'访问频繁，被新浪暂封了.'
+            logger.info(msg)
+            write_message(msg, self.window)
+            
+            return None
+            
         doc = self.extract_content(page, query)
                     
         return doc     
@@ -829,12 +849,20 @@ class ComWeiboFetcher(object):
         req = self.pack_request(url, headers)
         page= self.urlopen_read(req)
         
-        data = json.loads(page)['data']
-        
-        html     = data['html']
-        num_pages= int(data['page']['totalpage'])
-        
-        return html, num_pages
+        try:
+            if json.loads(page)['code'] == '100000':
+                data = json.loads(page)['data']
+                html = data['html']
+                pg   = int(data['page']['totalpage'])
+                
+                return html, pg
+            else:
+                msg = json.loads(page)['msg']
+                logger.info(msg)
+                write_message(msg, self.window)
+                return None, None
+        except ValueError:
+            return page, None
     
     def fetch_msg_comments(self, msg_id, page=1):
         url = 'http://weibo.com/aj/comment/big?_wv=5'
@@ -855,12 +883,20 @@ class ComWeiboFetcher(object):
         req = self.pack_request(url, headers)
         page= self.urlopen_read(req)
         
-        data = json.loads(page)['data']
-        
-        html     = data['html']
-        num_pages= int(data['page']['totalpage'])
-        
-        return html, num_pages    
+        try:
+            if json.loads(page)['code'] == '100000':
+                data = json.loads(page)['data']
+                html = data['html']
+                pg   = int(data['page']['totalpage'])
+                
+                return html, pg
+            else:
+                msg = json.loads(page)['msg']
+                logger.info(msg)
+                write_message(msg, self.window)
+                return None, None
+        except ValueError:
+            return page, None   
 
 def urldecode(link):
     decodes = {}

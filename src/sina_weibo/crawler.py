@@ -28,18 +28,52 @@ class ComWeiboCrawler(object):
         if html is None:
             return False
         
-        return not (u'<title>' in html)
-        
-    def _fetch(self, url, query):
-        html = self.fetcher.fetch(url, query)
-        
         if len(html) == 0:
             msg = u'weibo改版了,信息标签发生变化'
             logger.info(msg)
             write_message(msg, self.window)
+            
             return None
         
+        return not (u'<title>' in html)
+    
+    def _fetch_weibo(self, uid, page):
+        html = self.fetcher.fetch_weibo(uid, page)
+        
         page_right = self._check_page_right(html)
+        
+        if page_right is None:
+            return None
+        
+        if page_right:
+            return html
+        
+        tries = 0
+        while not page_right and tries <= 10:
+            time.sleep(10)
+            self.fetcher.check_cookie()
+            
+            sec = (tries + 1) * 10
+            write_message('_fetch trying: %s, sleep: %s seconds' %(tries, sec), self.window)
+            time.sleep(sec)
+            
+            html = self.fetcher.fetch_weibo(uid, page)
+            page_right = self._check_page_right(html)
+            
+            if page_right:
+                return html
+            
+            tries += 1
+        
+        return None
+    
+    def _fetch(self, url, query):
+        html = self.fetcher.fetch(url, query)
+        
+        page_right = self._check_page_right(html)
+        
+        if page_right is None:
+            return None
         
         if page_right:
             return html
@@ -66,13 +100,10 @@ class ComWeiboCrawler(object):
     def _fetch_msg_repost(self, msg_id, page=1):
         html, num_pages = self.fetcher.fetch_msg_reposts(msg_id, page)
         
-        if len(html) == 0:
-            msg = u'weibo改版了,信息标签发生变化'
-            logger.info(msg)
-            write_message(msg, self.window)
-            return None
-        
         page_right = self._check_page_right(html)
+
+        if page_right is None:
+            return None
         
         if page_right:
             return html, num_pages
@@ -99,13 +130,10 @@ class ComWeiboCrawler(object):
     def _fetch_msg_comment(self, msg_id, page=1):
         html, num_pages = self.fetcher.fetch_msg_comments(msg_id, page)
         
-        if len(html) == 0:
-            msg = u'weibo改版了,信息标签发生变化'
-            logger.info(msg)
-            write_message(msg, self.window)
-            return None
-        
         page_right = self._check_page_right(html)
+
+        if page_right is None:
+            return None
         
         if page_right:
             return html, num_pages
@@ -129,39 +157,6 @@ class ComWeiboCrawler(object):
         
         return None, None
                 
-    def _fetch_weibo(self, uid, page):
-        html = self.fetcher.fetch_weibo(uid, page)
-        
-        if len(html) == 0:
-            msg = u'weibo改版了,信息标签发生变化'
-            logger.info(msg)
-            write_message(msg, self.window)
-            return None
-        
-        page_right = self._check_page_right(html)
-        
-        if page_right:
-            return html
-        
-        tries = 0
-        while not page_right and tries <= 10:
-            time.sleep(10)
-            self.fetcher.check_cookie()
-            
-            sec = (tries + 1) * 10
-            write_message('_fetch trying: %s, sleep: %s seconds' %(tries, sec), self.window)
-            time.sleep(sec)
-            
-            html = self.fetcher.fetch_weibo(uid, page)
-            page_right = self._check_page_right(html)
-            
-            if page_right:
-                return html
-            
-            tries += 1
-        
-        return None
-        
     def crawl_weibos(self):
         def _crawl(parser, uid, page, num_pages='?'):
             msg = 'Crawl user(%s)\'s weibos-page: %s:%s' %(self.uid, num_pages, page)
