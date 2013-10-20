@@ -636,7 +636,10 @@ class ComWeiboFetcher(object):
                     logger.info(msg)
                     write_message(msg, self.window)
             
-                    return None
+                    sec = 30*60
+                    msg = 'Waiting for %s sec, and try again.' %sec
+                    write_message(msg, self.window)
+                    time.sleep(msg)
                 
                 is_exist = is_exist and ("$CONFIG['oid']='%s'" %uid in page 
                                         or "$CONFIG['oid'] = '%s'" %uid in page
