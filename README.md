@@ -53,107 +53,107 @@ WEIBO
 -----
 
 
-| key 					      | meaning 							                  	| example 						          			            	|
-| ------------------- | ----------------------------------------- | ------------------------------------------------- |
-| uid 			      		| 用户ID(数字) 								              | 1000000253 						              	        		|
-| nickname 		    		| 用户昵称 	                  							| 茶歇时间 						                      				|
-| msg 	      				| 消息内容 						                			| 一公司网管：老板知道装了360上不了QQ，高兴坏了... 	|
-| msgurl 		      		| 消息URL 						                 			| http://weibo.com/1000000253/zF0sMQjYKS 		        |
-| msg_id 		      		| 消息ID(数字) 								              | 3471354253 							                      		|
-| msgtime 		    		| 消息发布时间(linux时间戳) 			        	| 1289012596 	                      								|
-| msgfrom 			     	| 消息来自(设备) 						              	| iPhone客户端 			                    						|
-| media 		      		| 是否含有图片/音频/视频(True/False) 		    | True 									                        		|
-| map_data 			    	| 地图信息 						                  		|  				                          								|
-| n_likes 				    | 赞 						                      			| 1 						                          					|
-| n_forwards 		    	| 转发 						                     			| 1 					                          						|
-| n_favorites 		  	| 收藏 							                  			| 1 						                          					|
-| n_comments 		    	| 评论 								                  		| 1 								                          			|
-| is_forward 			    | 本消息是否转发(True/) 					          | True 			                        								|
-| forward_uid 		  	| 原消息发布用者的ID(数字) 					        | 1644572034 					                      				|
-| forward_nickname 		| 原消息发布用者的昵称 					          	| 精彩语录 								                      		|
-| forward_daren 		  | 原消息发布用者的认证信息-达人 			    	| 微博达人 							                      			|
-| forward_verified 		| 原消息发布用者的认证信息-新浪认证 	      | 新浪认证 				                      						|
-| forward_vip 			  | 原消息发布用者的认证信息-新浪会员         | 微博会员 				                      						|
-| forward_msg 			  | 原消息 							            	      	|  											                          	|
-| forward_msgurl 		  | 原消息地址 							                	|  								                          				|
-| forward_msg_id 		  | 原消息ID(数字) 			              				|  												                          |
-| forward_msgtime 		| 原消息发布时间(linux时间戳) 		      		|  				                          								|
-| forward_msgfrom 		| 原消息来自(设备) 		            					|  				                          								|
-| forward_media 		  | 原消息是否含有图片/音频/视频(True/False) 	|  								                          				|
-| forward_map_data 		| 原消息地图信息 					              		|  								                          				|
-| forward_n_likes 		| 原消息赞 								                	|  												                          |
-| forward_n_forwards 	| 原消息转发 						                		|  										                          		|
-| forward_n_favorites	| 原消息收藏 								                |  								                          				|
-| forward_n_comments 	| 原消息评论 				                 				|  												                          |
+| key			| meaning				| example			            	|
+| --------------------- | ------------------------------------- | --------------------------------------------- |
+| uid			| 用户ID(数字)				| 1000000253					|
+| nickname		| 用户昵称				| 茶歇时间					|
+| msg			| 消息内容				| 一公司网管：老板知道装了360上不了QQ，高兴坏了...	|
+| msgurl		| 消息URL				| http://weibo.com/1000000253/zF0sMQjYKS	|
+| msg_id		| 消息ID(数字)				| 3471354253					|
+| msgtime		| 消息发布时间(linux时间戳)			| 1289012596					|
+| msgfrom		| 消息来自(设备)				| iPhone客户端					|
+| media			| 是否含有图片/音频/视频(True/False)	| True						|
+| map_data		| 地图信息				| 						|
+| n_likes		| 赞					| 1						|
+| n_forwards		| 转发					| 1						|
+| n_favorites		| 收藏					| 1						|
+| n_comments		| 评论					| 1						|
+| is_forward		| 本消息是否转发(True/)			| True						|
+| forward_uid		| 原消息发布用者的ID(数字)			| 1644572034					|
+| forward_nickname	| 原消息发布用者的昵称			| 精彩语录					|
+| forward_daren		| 原消息发布用者的认证信息-达人		| 微博达人					|
+| forward_verified	| 原消息发布用者的认证信息-新浪认证		| 新浪认证					|
+| forward_vip		| 原消息发布用者的认证信息-新浪会员		| 微博会员					|
+| forward_msg		| 原消息					| 						|
+| forward_msgurl	| 原消息地址				| 						|
+| forward_msg_id	| 原消息ID(数字)				| 						|
+| forward_msgtime	| 原消息发布时间(linux时间戳)		| 						|
+| forward_msgfrom	| 原消息来自(设备)				| 						|
+| forward_media		| 原消息是否含有图片/音频/视频(True/False) 	| 						|
+| forward_map_data	| 原消息地图信息				| 						|
+| forward_n_likes	| 原消息赞				| 						|
+| forward_n_forwards 	| 原消息转发				| 						|
+| forward_n_favorites	| 原消息收藏				| 						|
+| forward_n_comments 	| 原消息评论				| 						|
 
 
 USER-fans/follows
 -----------------
 
-| key 		    	| meaning     		| example 	|
-| ------------- | --------------- | --------- |
-| uid 		    	| 用户ID(数字) 	  |  		    	|
-| nickname 	  	| 昵称 			      |  	    		|
-| sex 			    | 性别    			  |   		  	|
-| addr 	    		| 地址 	    		  |  		    	|
-| daren 	    	| 达人 		    	  |  		    	|
-| verified 	  	| 新浪认证 		    |  		    	|
-| vip 			    | 新浪会员 	    	|  		    	|
-| n_follows   	| 关注数 	      	|  		    	|
-| n_fans 	    	| 粉丝数      		|  		    	|
-| n_weibos 	  	| 微博数       		|  			    |
-| intro 		    | 简介 		      	|  		    	|
-| follow_from 	| 关注来自(设备) 	|  			    |
+| key		| meaning	| example	|
+| ------------- | ------------- | ------------- |
+| uid		| 用户ID(数字)	| 		|
+| nickname	| 昵称		| 		|
+| sex		| 性别		| 		|
+| addr		| 地址		| 		|
+| daren		| 达人		| 		|
+| verified	| 新浪认证	| 		|
+| vip		| 新浪会员	| 		|
+| n_follows	| 关注数		| 		|
+| n_fans	| 粉丝数		| 		|
+| n_weibos	| 微博数		| 		|
+| intro		| 简介		| 		|
+| follow_from	| 关注来自(设备)	| 		|
 
 
 INFO-用户信息
 -------------
 
-| key 			    	| meaning 	    	| example 	|
-| --------------- | --------------- | --------- |
-| uid 			    	| 用户ID      		|  		    	|
-| nickname  			| 昵称 			      |  		    	|
-| location  			| 地址 		      	|  	    		|
-| sex     				| 性别 	      		|  	    		|
-| birth 		    	| 生日 			      |  	    		|
-| blog 		    		| 博客 		      	|  		    	|
-| domain    			| 个性域名 		    |  		    	|
-| intro 	    		| 简介 		      	|  		    	|
-| email      			| email 		      |  	    		|
-| QQ 			      	| QQ        			|  		    	|
-| MSN 				    | MSN 		      	|  	    		|
-| university 		  | 教育 	       		|  		    	|
-| company 			  | 工作 			      |  	    		|
-| tag				      | 标签 		      	|  	    		|
-| n_follows 		  | 关注数 	      	|  	    		|
-| n_fans 			    | 粉丝数 		      |  	    		|
-| n_weibos 			  | 微博数 	      	|  	    		|
-| daren_level 		| 达人信息(等级) 	| 高级达人 	|
-| daren_score 		| 达人信息(积分) 	|  		    	|
-| daren_interests | 达人信息(爱好) 	|  	    		|
-| medal 			    | 勋章信息 		    |  	    		|
-| cur_level 		  | 当前等级 	    	|  	    		|
-| active_days 		| 活跃天数 		    |  	    		|
-| next_level_days | 距离下一级别 	  |     			|
-| trust_level 		| 信用等级 		    |  		    	|
-| trust_score 		| 当前信用积分 	  |     			|
+| key			| meaning	| example	|
+| --------------------- | ------------- | ------------- |
+| uid			| 用户ID		| 		|
+| nickname		| 昵称		| 		|
+| location		| 地址		| 		|
+| sex			| 性别		| 		|
+| birth			| 生日		| 		|
+| blog			| 博客		| 		|
+| domain		| 个性域名	| 		|
+| intro			| 简介		| 		|
+| email			| email		| 		|
+| QQ			| QQ		| 		|
+| MSN			| MSN		| 		|
+| university		| 教育		| 		|
+| company		| 工作		| 		|
+| tag			| 标签		| 		|
+| n_follows		| 关注数		| 		|
+| n_fans		| 粉丝数		| 		|
+| n_weibos		| 微博数		| 		|
+| daren_level		| 达人信息(等级)	| 高级达人	|
+| daren_score		| 达人信息(积分)	| 		|
+| daren_interests	| 达人信息(爱好)	| 		|
+| medal			| 勋章信息	| 		|
+| cur_level		| 当前等级	| 		|
+| active_days		| 活跃天数	| 		|
+| next_level_days	| 距离下一级别	| 		|
+| trust_level		| 信用等级	| 		|
+| trust_score		| 当前信用积分	| 		|
 
 
 REPOSTS/COMMENTS--消息转发/评论
 -------------------------------
 
-| key 				      | meaning 					            		    | example 	              								|
-| ----------------- | ------------------------------------- | --------------------------------------- |
-| uid 				      | 转发/评论消息用户的ID 			    	    |  				                  							|
-| nickname 			    | 转发/评论消息用户的昵称 				      |  			                  								|
-| daren 			      | 转发/评论消息用户的认证信息-达人 		  |  								                  			|
-| verified 			    | 转发/评论消息用户的认证信息-新浪认证  |  							                  				|
-| vip 				      | 转发/评论消息用户的认证信息-新浪会员 	|  								                  			|
-| msg 				      | 转发/评论消息 			            			|  											                  |
-| msg_url 			    | 转发/评论消息URL 					            |  										                  	|
-| msg_id 			      | 转发/评论消息ID 				            	|  									                  		|
-| msg_time 			    | 转发/评论时间(linuxlinux时间戳) 		  |  									                  		|
-| forward_uid 		  | 原消息用户ID 						              |  											                  |
-| forward_nickname 	| 原消息用户昵称 						            |  										                  	|
-| forward_msg_url 	| 原消息URL 							              | http://weibo.com/1000000253/zF0sMQjYKS 	|
-| forward_msg_id 	  | 原消息ID(数字) 						            | 3471354253 	              							|
+| key			| meaning				| example					|
+| --------------------- | ------------------------------------- | --------------------------------------------- |
+| uid			| 转发/评论消息用户的ID			| 						|
+| nickname		| 转发/评论消息用户的昵称			| 						|
+| daren			| 转发/评论消息用户的认证信息-达人		| 						|
+| verified		| 转发/评论消息用户的认证信息-新浪认证		| 						|
+| vip			| 转发/评论消息用户的认证信息-新浪会员		| 						|
+| msg			| 转发/评论消息				| 						|
+| msg_url		| 转发/评论消息URL				| 						|
+| msg_id		| 转发/评论消息ID				| 						|
+| msg_time		| 转发/评论时间(linuxlinux时间戳)		| 						|
+| forward_uid		| 原消息用户ID				| 						|
+| forward_nickname	| 原消息用户昵称				| 						|
+| forward_msg_url	| 原消息URL				| http://weibo.com/1000000253/zF0sMQjYKS	|
+| forward_msg_id	| 原消息ID(数字)				| 3471354253					|
