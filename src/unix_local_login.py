@@ -133,8 +133,8 @@ class Frame(wx.Frame):
                     self.Destroy()
                     wx.GetApp().ExitMainLoop()
                     
-                    import unix_local_crawler as wlc
-                    wlc.main(account_display=account, website_display=website,
+                    import unix_local_crawler as ulc
+                    ulc.main(account_display=account, website_display=website,
                              fetcher=fetcher)
             elif website == settings.TWITTER:
                 wx.MessageBox(message='For Twitter: not implemented. Please retry!',

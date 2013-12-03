@@ -133,7 +133,7 @@ class Frame(wx.Frame):
                     self.Destroy()
                     wx.GetApp().ExitMainLoop()
                     
-                    import unix_local_crawler as wlc
+                    import win_local_crawler as wlc
                     wlc.main(account_display=account, website_display=website,
                              fetcher=fetcher)
             elif website == settings.TWITTER:
