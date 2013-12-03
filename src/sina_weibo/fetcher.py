@@ -1094,7 +1094,7 @@ class CnWeiboFetcher(object):
             self.cj.save(self.cookie_file, True, True)
             
             msg = 'weibo.cn: login succeed.'
-            write_message(msg, self.window)
+            write_message(msg)
             
             return True
         except KeyError:
