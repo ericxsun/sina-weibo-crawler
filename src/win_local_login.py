@@ -1,6 +1,7 @@
 #encoding: utf-8
 
 from sina_weibo.fetcher import ComWeiboFetcher
+from sina_weibo.fetcher import CnWeiboFetcher
 from wx.lib import hyperlink
 import logo
 import settings
