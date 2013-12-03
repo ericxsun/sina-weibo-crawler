@@ -15,7 +15,7 @@ MSG_CHOICES      = ['repost', 'comment']
 
 HOME_PAGE = 'http://www.cns.edu.cn'
 
-DEVELOPERS = ['x.s.<followyourheart1211@gmail.com>']
+DEVELOPERS = ['Eric x.sun<followyourheart1211@gmail.com>']
 LICENCE    = 'See %s' % HOME_PAGE
 COPYRIGHT  = '(C) 2013 Center of Networked Systems'
 
@@ -39,7 +39,7 @@ LOCAL_CRAWLER_HELP_DOC  += ('2. Multi User ID: "crawl the data of users". '
                             'and then start crawling;\n\n')
 LOCAL_CRAWLER_HELP_DOC  += ('3. Message URL: "crawl the reposts and comments of '
                             'messages".  That is : input the url of messages, '
-                            '(like: http://weibo.com/1000000253/ezC36cq3i6G), ' 
+                            '(like: http://weibo.com/1000000253/ezC36cq3i6G), '
                             'every two URLs with a semicolon as the delimiter, '
                             'and then start crawling;\n\n')
 LOCAL_CRAWLER_HELP_DOC  += ('4. For more information and data sets,'
@@ -57,4 +57,4 @@ DISTR_CRAWLER_HELP_TITLE = 'About the Crawler Client'
 DISTR_CRAWLER_HELP_DOC   = ('1. Use the account of weibo.com,'
                             ' twitter.com etc. to start the crawler;\n\n')
 DISTR_CRAWLER_HELP_DOC  += ('2. For more information and data sets,'
-                            ' please visit:')    
+                            ' please visit:')
