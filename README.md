@@ -5,6 +5,7 @@ sina-weibo-crawler
 
 注: 其中的登录和cookie管理均来自<a href='http://114.113.145.13/'>中国爬盟</a>, 非常感谢.
 
+新增了对(<a href='http://weibo.cn'>新浪微博(移动版)</a>)的关注, 粉丝的采集.
 
 snapshot
 ========
