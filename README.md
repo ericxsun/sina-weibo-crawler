@@ -3,7 +3,7 @@ sina-weibo-crawler
 
 本项目实为实验室微博数据分析中的数据采集模块(针对<a href='http://weibo.com'>新浪微博</a>), 可以采集指定用户的微博, 关注, 粉丝, 也可以采集指定消息的转发和评论. 网络上已经出现了很多的微博crawler, 如<a href='http://114.113.145.13/'>中国爬盟</a>, <a href='http://qinxuye.me/article/cola-a-distributed-crawler-framework/'>Cola：一个分布式爬虫框架</a>. 再次发明了轮子, 囧, 记得帮主说过一句话:还是自家的好,我就心宽了, 哈哈.
 
-注: 其中的登录和cookie管理均来自<a href='http://114.113.145.13/'>中国爬盟</a>, 非常感谢.
+注: 其中的登录和cookie管理均来自<a href='http://114.113.145.13/'>中国爬盟</a>, 非常感谢. [爬盟备份神器](https://github.com/CnPaMeng/WeiboMsgBackupGUI)开源啦,强力顶起.
 
 新增了对(<a href='http://weibo.cn'>新浪微博(移动版)</a>)的关注, 粉丝的采集.
 
