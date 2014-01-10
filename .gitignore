@@ -1,4 +1,6 @@
 *.py[cod]
+# Folder
+.settings/
 
 # C extensions
 *.so
