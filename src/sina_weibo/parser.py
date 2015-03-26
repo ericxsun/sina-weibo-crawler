@@ -240,9 +240,15 @@ class ComWeibosParser(object):
         #--page count
         cnt = 1
         try:
-            pg = pq_doc.find('div.W_pages span.list a.W_moredown')
-            pg_info = pg.attr('action-data').split('&')
-            cnt = int(pg_info[1].split('countPage=')[-1])
+            # pg = pq_doc.find('div.W_pages span.list a.W_moredown')
+            pg = pq_doc.find('div.W_pages span.list div[action-type="feed_list_page_morelist"] a[action-type="feed_list_page"]')
+            cnt = 1
+            cnts = map(lambda p: int(pq(p).attr('href').split('&')[0].split('page=')[-1]), pg)
+            cnts = sorted(cnts, reverse=True)
+            cnt = cnts[0]
+
+            # pg_info = pg.attr('action-data').split('&')
+            # cnt = int(pg_info[1].split('countPage=')[-1])
         except:
             pass
         
